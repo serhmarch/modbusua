@@ -1,0 +1,57 @@
+Name:           @CN_APP_NAME@
+Version:        @CN_APP_VERSION@
+Release:        1%{?dist}
+Summary:        @CN_APP_DESC@
+#BuildArch:      @CN_APP_ARCH@
+
+License:        MIT
+Requires:       bash
+
+%description
+@CN_APP_DESC@
+
+#%%prep
+#%%setup -q
+
+%install
+${CMAKE_COMMAND} --install "${CMAKE_BINARY_DIR}" --prefix %{buildroot}
+
+%files
+#%%license add-license-file-here
+#%%doc add-docs-here
+%{_bindir}/%{name}
+%{_bindir}/%{name}-%{version}
+/etc/%{name}/%{name}.conf
+/etc/systemd/system/%{name}.service
+/var/lib/%{name}
+/var/log/%{name}
+
+%post
+#!/bin/bash
+
+# set -e is used in shell scripts to make the script exit immediately
+# if any command returns a non-zero (error) status
+set -e
+
+# "$1" = 1 indicates that this is a fresh installation
+#if [ "$1" = 1 ]; then
+#	# Enable and start the modbusua service after installation
+#    systemctl enable @CN_APP_NAME@
+#    systemctl start @CN_APP_NAME@
+#fi
+
+%preun
+#!/bin/bash
+
+# set -e is used in shell scripts to make the script exit immediately
+# if any command returns a non-zero (error) status
+set -e
+
+# "$1" = 0 indicates that this is a removal (not an upgrade)
+if [ "$1" = 0 ]; then
+	# Stop and disable the modbusua service before removing
+	systemctl stop @CN_APP_NAME@
+	systemctl disable @CN_APP_NAME@
+fi
+
+#%%changelog

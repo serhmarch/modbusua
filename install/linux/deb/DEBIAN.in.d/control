@@ -1,0 +1,7 @@
+Package: @CN_APP_NAME@
+Version: @CN_APP_VERSION@
+Section: utils
+Priority: optional
+Architecture: @CN_APP_ARCH@
+Maintainer: serhmarch <mrchsrg@gmail.com>
+Description: @CN_APP_DESC@

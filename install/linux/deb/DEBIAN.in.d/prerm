@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# set -e is used in shell scripts to make the script exit immediately
+# if any command returns a non-zero (error) status
+set -e
+
+if [ "$1" = "remove" ] || [ "$1" = "purge" ]; then
+	# Stop and disable the modbusua service before removing
+	systemctl stop @CN_APP_NAME@
+	systemctl disable @CN_APP_NAME@
+fi

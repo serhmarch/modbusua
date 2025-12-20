@@ -1,0 +1,72 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "cppvsdbg",
+            "name": "C++ VS Debug Launch",
+            "request": "launch",
+            "program": "${command:cmake.launchTargetPath}",
+            "stopAtEntry": false,
+            "cwd": "${env:USERPROFILE}/tmp",
+            "console": "externalTerminal",
+            "visualizerFile": "c:\\Users\\march\\AppData\\Roaming\\Code\\User\\workspaceStorage\\f496642b10b95a3f76bd51853428bf62\\tonka3000.qtvsctools\\qt.natvis.xml",
+            "args": ["--file", "c:/Users/march/Dropbox/PRJ/modbusua/examples/modbusua.conf"],
+            "environment": [
+                {
+                    "name": "PATH",
+                    "value": "${env:PATH};c:/Qt/5.15.2/msvc2019_64/bin" //${command:qt-cpp.kitDirectory}${/}bin"
+                }
+            ],
+        },
+        {
+            "type": "cppdbg",
+            "name": "C++ GCC Launch",
+            "request": "launch",
+            "program": "${command:cmake.launchTargetPath}",
+            "stopAtEntry": false,
+            "windows": {
+                //"cwd": "${env:HOME}/tmp/modbusua",
+                //"cwd": "${fileDirname}",
+                //"MIMode": "gdb",
+                //"miDebuggerPath": "C:\\MinGw\\bin\\gdb.exe",
+                "console": "externalTerminal",
+                "visualizerFile": "c:\\Users\\march\\AppData\\Roaming\\Code\\User\\workspaceStorage\\f496642b10b95a3f76bd51853428bf62\\tonka3000.qtvsctools\\qt.natvis.xml",
+                "args": [
+                    //"--file", "modbusua.conf"
+                ],
+                "environment": [
+                    {
+                        "name": "PATH",
+                        "value": "${env:PATH};c:/Qt/5.15.2/msvc2019_64/bin" //${command:qt-cpp.kitDirectory}${/}bin"
+                    }
+                ]
+            },
+            "linux": {
+                "type": "cppdbg",
+                "cwd": "/home/march/tmp/",
+                "MIMode": "gdb",
+                "miDebuggerPath": "/usr/bin/gdb",
+                "args": [
+                    //"--file", "/etc/modbusua/modbusua.conf"
+                    "--file", "/mnt/c/Users/march/Dropbox/PRJ/modbusua/examples/modbusua.conf"
+                ],
+                "environment": [],
+                "setupCommands": [
+                    {
+                        "description": "Enable pretty-printing for gdb",
+                        "text": "-enable-pretty-printing",
+                        "ignoreFailures": true
+                    },
+                    {
+                        "description": "Set Disassembly Flavor to Intel",
+                        "text": "-gdb-set disassembly-flavor intel",
+                        "ignoreFailures": true
+                    }
+                ]
+            },
+        }
+    ]
+}

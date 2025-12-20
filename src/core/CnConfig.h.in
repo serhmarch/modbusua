@@ -1,0 +1,37 @@
+#ifndef CNCONFIG_H
+#define CNCONFIG_H
+
+/*
+   Major part of gateway version
+*/
+#define CN_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
+
+/*
+   Minor part of gateway version
+*/
+#define CN_VERSION_MINOR @PROJECT_VERSION_MINOR@
+
+/*
+   Patch part of gateway version
+*/
+#define CN_VERSION_PATCH @PROJECT_VERSION_PATCH@
+
+
+/*
+   Name of the application
+*/
+#define CN_APP_NAME "@CN_APP_NAME@"
+
+/*
+   Description of the application
+*/
+#define CN_APP_DESC "@CN_APP_DESC@"
+
+/*
+   Name of the configuration file
+*/
+#define CN_APP_CONF "@CN_APP_CONF@"
+
+#cmakedefine CN_USE_WSTRING
+
+#endif // CNCONFIG_H

@@ -1,0 +1,17 @@
+[Unit]
+Description=OPC UA - Modbus Gateway
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/modbusua -f /etc/modbusua/modbusua.conf
+ExecReload=kill -HUP $MAINPID
+WorkingDirectory=/var/lib/modbusua
+#Restart=on-failure
+#RestartSec=5
+#StandardOutput=journal
+#StandardError=journal
+#Environment=MODBUSUA_CONFIG=/etc/modbusua/modbusua.conf
+
+[Install]
+WantedBy=multi-user.target

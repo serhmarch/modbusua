@@ -1,0 +1,214 @@
+{
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "Config-Base",
+            "displayName": "Config Base",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+            }
+        },
+        {
+            "name": "Win-Base",
+            "displayName": "Base Configuration for Windows",
+            "inherits": "Config-Base",
+            "hidden": true,
+            "binaryDir": "$env{USERPROFILE}/tmp/cmake/modbusua/bin",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "Win64-MSVC",
+            "displayName": "Win64 Config Default MSVC",
+            "description": "Using compilers for Visual Studio 17 2022 (x64 architecture)",
+            "inherits": "Win-Base",
+            "generator": "Visual Studio 17 2022",
+            "toolset": "host=x64",
+            "architecture": "x64",
+            "binaryDir": "$env{USERPROFILE}/tmp/cmake/modbusua/bin/Win64",
+            "cacheVariables": {
+                "CMAKE_PREFIX_PATH": "C:/Qt/5.15.2/msvc2019_64",
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_CXX_COMPILER": "cl.exe"
+            }
+        },
+        {
+            "name": "Win32-MSVC",
+            "displayName": "Win32 Config Default MSVC",
+            "description": "Using compilers for Visual Studio 17 2022 (x64_x86 architecture)",
+            "inherits": "Win-Base",
+            "generator": "Visual Studio 17 2022",
+            "toolset": "host=x64",
+            "architecture": "win32",
+            "binaryDir": "$env{USERPROFILE}/tmp/cmake/modbusua/bin/Win32",
+            "cacheVariables": {
+                "CMAKE_PREFIX_PATH": "C:/Qt/5.15.2/msvc2019",
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_CXX_COMPILER": "cl.exe"
+            }
+        },
+        {
+            "name": "Win64-MSVC-Tests",
+            "displayName": "Win64 Config Tests MSVC",
+            "inherits": "Win64-MSVC",
+            "binaryDir": "$env{USERPROFILE}/tmp/cmake/modbusua/bin/Win64-Tests",
+            "cacheVariables": {
+                "CN_TESTS_ENABLED": "ON"
+            }
+        },
+        {
+            "name": "Win32-MSVC-Tests",
+            "displayName": "Win32 Config Tests MSVC",
+            "inherits": "Win32-MSVC",
+            "binaryDir": "$env{USERPROFILE}/tmp/cmake/modbusua/bin/Win32-Tests",
+            "cacheVariables": {
+                "CN_TESTS_ENABLED": "ON"
+            }
+        },
+        {
+            "name": "Linux-Base",
+            "displayName": "GCC Linux-gnu Default",
+            "description": "Using compilers: C = /usr/bin/gcc, CXX = /usr/bin/g++",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "/usr/bin/gcc",
+                "CMAKE_CXX_COMPILER": "/usr/bin/g++"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "Linux-Debug",
+            "displayName": "Linux GCC Config Debug",
+            "inherits": "Linux-Base",
+            "binaryDir": "$env{HOME}/tmp/cmake/modbusua/Linux/Debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "Linux-Debug-Tests",
+            "displayName": "Linux GCC Config Debug Tests",
+            "inherits": "Linux-Debug",
+            "binaryDir": "$env{HOME}/tmp/cmake/modbusua/Linux/Debug-Tests",
+            "cacheVariables": {
+                "CN_TESTS_ENABLED": "ON"
+            }
+        },
+        {
+            "name": "Linux-Release",
+            "displayName": "Linux GCC Config Release",
+            "inherits": "Linux-Base",
+            "binaryDir": "$env{HOME}/tmp/cmake/modbusua/Linux/Release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "Build-Base",
+            "displayName": "Build Base",
+            "hidden": true,
+            "jobs": 10
+        },
+        {
+            "name": "Win64-MSVC-Debug",
+            "inherits": "Build-Base",
+            "configurePreset": "Win64-MSVC",
+            "configuration": "Debug"
+        },
+        {
+            "name": "Win64-MSVC-Debug-Tests",
+            "inherits": "Win64-MSVC-Debug",
+            "configurePreset": "Win64-MSVC-Tests"
+        },
+        {
+            "name": "Win64-MSVC-Release",
+            "inherits": "Build-Base",
+            "configurePreset": "Win64-MSVC",
+            "configuration": "Release"
+        },
+        {
+            "name": "Win32-MSVC-Debug",
+            "inherits": "Build-Base",
+            "configurePreset": "Win32-MSVC",
+            "configuration": "Debug"
+        },
+        {
+            "name": "Win32-MSVC-Debug-Tests",
+            "inherits": "Win32-MSVC-Debug",
+            "configurePreset": "Win32-MSVC-Tests"
+        },
+        {
+            "name": "Win32-MSVC-Release",
+            "inherits": "Build-Base",
+            "configurePreset": "Win32-MSVC",
+            "configuration": "Release"
+        },
+        {
+            "name": "Linux-Debug",
+            "inherits": "Build-Base",
+            "configurePreset": "Linux-Debug",
+            "configuration": "Debug"
+        },
+        {
+            "name": "Linux-Debug-Tests",
+            "inherits": "Linux-Debug",
+            "configurePreset": "Linux-Debug-Tests"
+        },
+        {
+            "name": "Linux-Release",
+            "inherits": "Build-Base",
+            "configurePreset": "Linux-Release",
+            "configuration": "Release"
+        }
+    ]
+    ,
+    "testPresets": [
+        {
+            "name": "Win64-Tests-Debug",
+            "displayName": "CTest Win64 Debug",
+            "configurePreset": "Win64-MSVC-Tests",
+            "configuration": "Debug",
+            "output": {
+                "outputOnFailure": true
+            },
+            "execution": {
+                "noTestsAction": "error",
+                "stopOnFailure": false
+            }
+        },
+        {
+            "name": "Win32-Tests-Debug",
+            "displayName": "CTest Win32 Debug",
+            "configurePreset": "Win32-MSVC-Tests",
+            "configuration": "Debug",
+            "output": {
+                "outputOnFailure": true
+            },
+            "execution": {
+                "noTestsAction": "error",
+                "stopOnFailure": false
+            }
+        },
+        {
+            "name": "Linux-Tests-Debug",
+            "displayName": "CTest Linux Debug",
+            "configurePreset": "Linux-Debug-Tests",
+            "output": {
+                "outputOnFailure": true
+            },
+            "execution": {
+                "noTestsAction": "error",
+                "stopOnFailure": false
+            }
+        }
+    ]
+}

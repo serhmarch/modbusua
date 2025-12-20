@@ -1,0 +1,49 @@
+Name:           modbusua
+Version:        0.4.0
+Release:        1%{?dist}
+Summary:        OPC UA - Modbus Gateway
+
+License:        MIT
+# URL:            http://modbusua.org
+# Source0:
+
+#BuildRequires:
+#Requires:
+
+%description
+OPC UA - Modbus Gateway
+
+#%%prep
+#%%autosetup
+
+
+#%%build
+#%%configure
+#%%make_build
+
+
+%install
+#%%make_install
+
+mkdir -p %{buildroot}/%{_bindir}
+mkdir -p %{buildroot}/etc/systemd/system
+mkdir -p %{buildroot}/etc/%{name}
+mkdir -p %{buildroot}/var/lib/%{name}
+
+cp ~/tmp/modbusua/%{name} %{buildroot}/%{_bindir}/
+cp ~/tmp/modbusua/%{name}-%{version} %{buildroot}/%{_bindir}/
+cp ~/tmp/modbusua/%{name}.service %{buildroot}/etc/systemd/system/
+cp ~/tmp/modbusua/%{name}.conf %{buildroot}/etc/%{name}/
+
+%files
+#%%license add-license-file-here
+#%%doc add-docs-here
+%{_bindir}/%{name}
+%{_bindir}/%{name}-%{version}
+/etc/%{name}/%{name}.conf
+/etc/systemd/system/%{name}.service
+/var/lib/%{name}
+
+%changelog
+* Fri Oct 10 2025 march
+- test

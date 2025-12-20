@@ -1,0 +1,6 @@
+[submodule "modbus"]
+	path = modbus
+	url = https://github.com/serhmarch/ModbusLib.git
+[submodule "opcua"]
+	path = opcua
+	url = https://github.com/open62541/open62541

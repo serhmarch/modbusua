@@ -1,0 +1,13 @@
+{
+    "recommendations": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cmake-tools",
+        "ms-vscode.test-adapter-converter",
+        "ms-vscode-remote.remote-wsl",
+        "twxs.cmake",
+        "zchrissirhcz.cmake-highlight",
+        "eamodio.gitlens",
+        "EditorConfig.EditorConfig",
+        "yzhang.markdown-all-in-one"
+    ]
+}
