@@ -1,202 +1,196 @@
-# Юніт-тести modbusua
+# modbusua Unit Tests
 
-## Призначення
+## Purpose
 
-Цей каталог містить юніт-тести для проєкту `modbusua`, написані з використанням GoogleTest/GoogleMock. 
-Тести перевіряють роботу ядра (core), пристроїв (device), портів (port), OPC UA-шару (ua) та допоміжних модулів.
+This directory contains unit tests for the `modbusua` project, written with GoogleTest/GoogleMock.
+The tests cover the core, devices, ports, OPC UA layer, and helper modules.
 
-## Попередні вимоги
+## Prerequisites
 - CMake 3.13+
-- Компилятор C++17
-- Наявні вихідні залежності, що збираються разом із проєктом (ModbusLib, open62541)
+- C++17 compiler
+- Source dependencies available and built along with the project (ModbusLib, open62541)
 
-> Примітка: У кореневому `CMakeLists.txt` уже інтегровано CTest і ввімкнено авто-реєстрацію тестів через `gtest_discover_tests`.
+> Note: The root CMakeLists.txt integrates CTest and auto‑registers tests via `gtest_discover_tests`.
 
-## Варіант A -- запуск через CTest (рекомендовано)
+## Option A — Run via CTest (recommended)
 
 ### Windows (MSVC + Presets)
-1) Налаштувати та зібрати тести (Debug):
+1) Configure and build tests (Debug):
 ```powershell
 cmake --preset Win64-MSVC-Tests
 cmake --build --preset Win64-MSVC-Debug-Tests
 ```
 
-2) Запустити всі тести:
+2) Run all tests:
 ```powershell
 ctest --preset Win64-Tests-Debug
 ```
-3) Запустити підмножину (фільтр за іменем тесту/фікстури):
+3) Run a subset (filter by test/fixture name):
 ```powershell
 ctest --preset Win64-Tests-Debug -R CnFileInfoTest
 ```
-4) Переглянути список зареєстрованих тестів:
+4) List registered tests:
 ```powershell
 ctest --preset Win64-Tests-Debug -N
 ```
 
 ### Linux (GCC/Clang + Presets)
-1) Налаштувати та зібрати тести (Debug):
+1) Configure and build tests (Debug):
 ```bash
 cmake --preset Linux-Debug-Tests
 cmake --build --preset Linux-Debug-Tests
 ```
-2) Запустити всі тести:
+2) Run all tests:
 ```bash
 ctest --preset Linux-Tests-Debug
 ```
-3) Запустити підмножину:
+3) Run a subset:
 ```bash
 ctest --preset Linux-Tests-Debug -R CnFileInfoTest
 ```
-4) Переглянути список тестів:
+4) List tests:
 ```bash
 ctest --preset Linux-Tests-Debug -N
 ```
 
-## Варіант B — прямий запуск виконуваного файлу тестів
+## Option B — Run the test executable directly
 
-Виконавчий файл тестів генерується як `testmodbusua`.
+The test executable is generated as `testmodbusua`.
 
-### Поширені параметри командного рядка (GoogleTest)
-Найуживаніші ключі для керування запуском тестів:
+### Common GoogleTest command‑line options
+Frequently used flags to control test execution:
 
-- `--gtest_list_tests`: показати список усіх доступних тестів/фікстур (без запуску).
-- `--gtest_filter=PATTERN`: запуск лише вибраних тестів. Підтримує `*` і множинні шаблони
-через `:` та виключення через `-`.
-	- Приклади: `CnFileInfoTest.*`, `CnDirTest.*:CnFileTest.*`, `* -CnDirTest.flaky_case`.
-- `--gtest_repeat=N`: повторити запуск N разів (наприклад, для виявлення нестабільних тестів).
-Використовуйте `--gtest_break_on_failure` для зупинки при першій помилці.
-- `--gtest_break_on_failure`: зупинити виконання при першому падінні.
-- `--gtest_shuffle`: перетасувати порядок тестів; опційно `--gtest_random_seed=SEED`.
-- `--gtest_output=xml[:FILE]`: зберегти результати у форматі JUnit XML для CI.
-Якщо `FILE` не задано — створюється за замовчуванням у поточній теці.
-- `--gtest_color=yes|no|auto`: керування кольорами в консолі.
-- `--gtest_also_run_disabled_tests`: також запускати тестові кейси, позначені як відключені.
-- `--gtest_brief`: коротший вивід (менше подробиць про успішні тести).
-
+- `--gtest_list_tests`: list all tests/fixtures without running.
+- `--gtest_filter=PATTERN`: run only selected tests. Supports `*`, multiple patterns with `:`, and exclusions with `-`.
+  - Examples: `CnFileInfoTest.*`, `CnDirTest.*:CnFileTest.*`, `* -CnDirTest.flaky_case`.
+- `--gtest_repeat=N`: repeat execution N times (useful for finding flaky tests). Combine with `--gtest_break_on_failure`.
+- `--gtest_break_on_failure`: stop at the first failure.
+- `--gtest_shuffle`: shuffle test order; optionally `--gtest_random_seed=SEED`.
+- `--gtest_output=xml[:FILE]`: save results in JUnit XML for CI. If `FILE` is omitted, a default is created in the current directory.
+- `--gtest_color=yes|no|auto`: control color output.
+- `--gtest_also_run_disabled_tests`: include tests marked as disabled.
+- `--gtest_brief`: shorter output (less detail for passing tests).
 
 ### Windows
-- Шлях за замовчуванням (Debug):
+- Default path (Debug):
 ```powershell
 $env:USERPROFILE\tmp\cmake\modbusua\bin\Win64-Tests\Debug\testmodbusua.exe
 ```
-- Приклади запуску:
+- Example runs:
 ```powershell
-# Усі тести
+# All tests
 your\path\to\testmodbusua.exe
 
-# Фільтрація GoogleTest
+# GoogleTest filtering
 your\path\to\testmodbusua.exe --gtest_filter="CnFileInfoTest.*"
 
 your\path\to\testmodbusua.exe --gtest_filter="CnDirTest.absoluteFilePath_test"
 
-# Список тестів (без запуску)
+# List tests (no run)
 your\path\to\testmodbusua.exe --gtest_list_tests
 
-# Повторний запуск і зупинка на першій помилці
+# Repeat and stop on first failure
 your\path\to\testmodbusua.exe --gtest_repeat=10 --gtest_break_on_failure
 
-# Перемішати порядок тестів із фіксованим зерном
+# Shuffle order with fixed seed
 your\path\to\testmodbusua.exe --gtest_shuffle --gtest_random_seed=123
 
-# Експорт результатів у JUnit XML (для CI)
+# Export JUnit XML (for CI)
 your\path\to\testmodbusua.exe --gtest_output=xml:results\gtest-report.xml
 ```
 
 ### Linux
-- Типовий шлях (Debug):
+- Typical path (Debug):
 ```bash
 $HOME/tmp/cmake/modbusua/Linux/Debug-Tests/testmodbusua
 ```
-- Приклади запуску:
+- Example runs:
 ```bash
-# Усі тести
+# All tests
 $HOME/tmp/cmake/modbusua/Linux/Debug-Tests/testmodbusua
 
-# Фільтрація GoogleTest
+# GoogleTest filtering
 $HOME/tmp/cmake/modbusua/Linux/Debug-Tests/testmodbusua --gtest_filter="CnFileInfoTest.*"
 
-# Список тестів (без запуску)
+# List tests (no run)
 $HOME/tmp/cmake/modbusua/Linux/Debug-Tests/testmodbusua --gtest_list_tests
 
-# Повторний запуск і зупинка на першій помилці
+# Repeat and stop on first failure
 $HOME/tmp/cmake/modbusua/Linux/Debug-Tests/testmodbusua --gtest_repeat=10 --gtest_break_on_failure
 
-# Перемішати порядок тестів із фіксованим зерном
+# Shuffle order with fixed seed
 $HOME/tmp/cmake/modbusua/Linux/Debug-Tests/testmodbusua --gtest_shuffle --gtest_random_seed=123
 
-# Експорт результатів у JUnit XML (для CI)
+# Export JUnit XML (for CI)
 $HOME/tmp/cmake/modbusua/Linux/Debug-Tests/testmodbusua --gtest_output=xml:results/gtest-report.xml
 ```
 
-### Приклади використання (швидкий старт)
+### Quick Start Examples
 
 #### Windows (PowerShell)
 ```powershell
-# 1) Один конкретний тест (точне ім'я Suite.Test)
+# 1) A single test (exact Suite.Test name)
 $exe = "$env:USERPROFILE\tmp\cmake\modbusua\bin\Win64-Tests\Debug\testmodbusua.exe"
 & $exe --gtest_filter="CnDirTest.filePath_test"
 
-# 2) Кілька груп тестів (через двокрапку) та виключення (через мінус)
+# 2) Multiple groups (colon) and exclusions (minus)
 & $exe --gtest_filter="CnDirTest.*:CnFileInfoTest.*-*flaky*"
 
-# 3) Повторити 50 разів і зупинитись на першій помилці
+# 3) Repeat 50 times and stop on first failure
 & $exe --gtest_repeat=50 --gtest_break_on_failure
 
-# 4) Перетасувати порядок тестів із фіксованим зерном
+# 4) Shuffle with a fixed seed
 & $exe --gtest_shuffle --gtest_random_seed=42
 
-# 5) Експорт звіту у JUnit XML
+# 5) Export JUnit XML report
 if (!(Test-Path results)) { New-Item -ItemType Directory results | Out-Null }
 & $exe --gtest_output=xml:results\gtest-report.xml
 ```
 
 #### Linux (bash)
 ```bash
-# 1) Один конкретний тест (точне ім'я Suite.Test)
+# 1) A single test (exact Suite.Test name)
 exe="$HOME/tmp/cmake/modbusua/Linux/Debug-Tests/testmodbusua"
 "$exe" --gtest_filter="CnDirTest.filePath_test"
 
-# 2) Кілька груп тестів та виключення
+# 2) Multiple groups and exclusions
 "$exe" --gtest_filter="CnDirTest.*:CnFileInfoTest.*-*flaky*"
 
-# 3) Повторити 50 разів і зупинитись на першій помилці
+# 3) Repeat 50 times and stop on first failure
 "$exe" --gtest_repeat=50 --gtest_break_on_failure
 
-# 4) Перетасувати порядок тестів із фіксованим зерном
+# 4) Shuffle with a fixed seed
 "$exe" --gtest_shuffle --gtest_random_seed=42
 
-# 5) Експорт звіту у JUnit XML
+# 5) Export JUnit XML report
 mkdir -p results
 "$exe" --gtest_output=xml:results/gtest-report.xml
 ```
 
-## Поради та діагностика
-- Щоб увімкнути збірку тестів вручну, використовуйте `-DCN_TESTS_ENABLED=ON` (у пресетах це вже зроблено).
-- Для детальнішого логування GoogleTest додайте
-`--gtest_repeat=1 --gtest_break_on_failure` або `--gtest_also_run_disabled_tests`.
-- Список тестів усередині виконуваного файлу:
+## Tips and Diagnostics
+- To enable building tests manually, use `-DCN_TESTS_ENABLED=ON` (already enabled in presets).
+- For more detailed GoogleTest logging, add
+`--gtest_repeat=1 --gtest_break_on_failure` or `--gtest_also_run_disabled_tests`.
+- List tests inside the executable:
 ```bash
 ./testmodbusua --gtest_list_tests
 ```
-- Деякі тести файлової системи працюють відносно поточної теки.
-Фікстури тестів створюють необхідні тимчасові каталоги й, за потреби,
-тимчасово перемикають поточну робочу теку під час виконання тестів.
+- Some filesystem tests operate relative to the current working directory. Fixtures create temporary directories and, when needed, temporarily change the working directory during test execution.
 
-## Структура цього каталогу
+## Directory Structure
 ```
 ./tests
-├── core/      # Тести для ядра (рядки, час, ФС тощо)
-├── device/    # Тести для пристроїв і їхніх елементів
-├── port/      # Тести для портів
-├── ua/        # Тести OPC UA-шару
-├── include/   # Допоміжні заголовки для тестів
+├── core/      # Core tests (strings, time, FS, etc.)
+├── device/    # Device tests and their elements
+├── port/      # Port tests
+├── ua/        # OPC UA layer tests
+├── include/   # Helper headers for tests
 ├── CMakeLists.txt
-└── README.md  # Цей файл
+└── README.md  # This file
 ```
 
-## Типові сценарії
-- Повна перебудова тестів:
+## Typical Scenarios
+- Full rebuild of tests:
 ```powershell
 # Windows
 cmake --preset Win64-MSVC-Tests
@@ -211,4 +205,4 @@ ctest --preset Linux-Tests-Debug --output-on-failure
 ```
 
 ---
-Докладніше про збірку і запуск — див. кореневий `README.md`.
+For more details on building and running, see the root README.md.

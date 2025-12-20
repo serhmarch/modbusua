@@ -1,65 +1,62 @@
 # modbusua Gateway
 
-## Загальний опис
+## Overview
 
-## Загальний опис
+`modbusua Gateway` is a cross‑platform (Windows, Linux) I/O server that bridges data
+between the Modbus protocol and OPC UA (Open Platform Communications Unified Architecture).
+It is implemented in C++ as an open‑source server and can run as a console application
+or a background service/daemon.
 
-`modbusua Gateway` — це кросплатформенний (Windows, Linux) сервер вводу-виводу для перетворення даних
-між протоколом Modbus та OPC UA (Open Platform Communications Unified Architecture).
-Програма реалізована як сервер з відкритим вихідним кодом на C++ і 
-представляє собою консольну програму/сервіс (демон у термінології Unix) .
+The gateway collects data from existing industrial PLCs or other Modbus devices
+(industrial sensors, meters, etc.) via Modbus, processes it, and exposes it through the
+widely adopted OPC UA protocol.
 
-`modbusua Gateway` призначений для збору інформації з існуючих промислових контролерів
-або інших Modbus пристроїв (такі як промислові датчики, лічильники тощо)
-через протокол Modbus та подальшої їх обробки і передачі через універсальний
-і загальновживаний протокол OPC UA.
+The project is built on two open‑source libraries:
+- Modbus (client side): https://github.com/serhmarch/ModbusLib
+- OPC UA (server side): https://github.com/open62541/open62541
 
-Проект заснований на двох бібліотеках із відкритим вихідним кодом:
-* Modbus (клієнтська сторона): https://github.com/serhmarch/ModbusLib
-* OPC UA ( серверна сторона ): https://github.com/open62541/open62541
+## Key Features
 
-## Ключові особливості
+- Modern C++ implementation (C++17 and above)
+- Cross‑platform support (Windows, Linux)
+- Configuration via a plain CONF/INI file
+- Logging to file with rotation and to the OS system log (Windows/Linux)
+- Runs as a console app or Windows service/Linux daemon
+- Multithreaded architecture for performance
+- Modular design for easy extensibility
+- Built‑in OPC UA server with configurable address space
+- Modbus TCP/RTU/ASCII support for a wide range of devices
+- Connection parameters, timeouts, retries configurable via the config file
+- Hot configuration reload without stopping the server
+- Support for common data types (bits, integers, floating‑point)
+- Scalable to many devices and tags
+- Built‑in diagnostics and monitoring of server and connections
+- Robust error handling and reconnection logic
+- Easy integration with existing SCADA systems and other upper‑level software
 
-- Реалізація на C++ з використанням сучасних бібліотек (C++11 і вище)
-- Кросплатформенність (Windows, Linux)
-- Конфігурація через текстовий файл у форматі CONF/INI
-- Логування у файл з ротацією, у системний журнал ОС Windows/Linux
-- Підтримка роботи як консольна програма або як сервіс/демон
-- Підтримка багатопоточності для підвищення продуктивності
-- Модульна архітектура для легкого розширення функціональності
-- Вбудований OPC UA сервер з можливістю налаштування адресного простору
-- Підтримка протоколу Modbus TCP/RTU/ASCII для взаємодії з різними пристроями
-- Налаштування параметрів з'єднання, таймаутів і повторних спроб через конфігураційний файл
-- Підтримка "гарячого" оновлення конфігурації без зупинки роботи сервера
-- Підтримка різних типів даних (бітові, цілі числа, числа з плаваючою комою)
-- Можливість масштабування для роботи з великою кількістю пристроїв і тегів
-- Вбудовані механізми діагностики та моніторингу стану сервера і з'єднань
-- Гнучка система обробки помилок і відновлення з'єднань
-- Можливість інтеграції з існуючими SCADA-системами та іншими програмами верхнього рівня
-
-## Архітектура системи
+## System Architecture
 
 ```
 +-------------------+       Modbus     +------------------+    OPC UA    +-----------------+
-|   ПЛК/Пристрій    | <--------------> | modbusua Gateway | <--------->  |   SCADA Client  |
-|                   |                  |                  |              |                 | 
-| * Modbus регістри |                  | * Modbus клієнт  |              | * Збір даних    |
-|                   |                  | * OPC UA сервер  |              | * Архівування   |
-|                   |                  |                  |              | * Візуалізація  |
+|    PLC/Device     | <--------------> | modbusua Gateway | <--------->  |   SCADA Client  |
+|                   |                  |                  |              |                 |
+| * Modbus registers|                  | * Modbus client  |              | * Data ingest   |
+|                   |                  | * OPC UA server  |              | * Archiving     |
+|                   |                  |                  |              | * Visualization |
 |                   |                  |                  |              |                 |
 +-------------------+                  +------------------+              +-----------------+
 ```
 
-## Встановлення та запуск
+## Build and Run
 
-### Збірка з вихідних кодів
+### Build From Source
 
-#### Вимоги
-- **CMake** 3.20 або новіша
-- **C++17** сумісний компілятор
-- **Git** для клонування репозиторію
+#### Requirements
+- **CMake** 3.20 or newer
+- **C++17** compliant compiler
+- **Git** to clone the repository
 
-#### Збірка на Windows
+#### Windows Build
 
 ```cmd
 git clone --recursive https://github.com/serhmarch/modbusua.git
@@ -69,7 +66,7 @@ cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build . --config Release
 ```
 
-#### Збірка на Linux
+#### Linux Build
 
 ```bash
 git clone --recursive https://github.com/serhmarch/modbusua.git
@@ -79,56 +76,56 @@ cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build . --config Release
 ```
 
-### Встановлення на Windows
+### Windows Installation
 
-#### Як Windows Service
+#### As a Windows Service
 
 ```cmd
-# Встановити як службу (потрібні права адміністратора)
+:: Install as a service (requires Administrator)
 modbusuaservice.bat -i -n modbusuaService
 
-# Видалити службу
+:: Uninstall the service
 modbusuaservice.bat -u -n modbusuaService
 ```
 
 #### MSI Installer
-Для створення MSI інсталятора використовується WiX Toolset:
+Build an MSI installer using the WiX Toolset:
 ```cmd
 cd install/windows
 cmake --build . --target modbusua-msi
 ```
 
-### Встановлення на Linux
+### Linux Installation
 
-#### SystemD Service
+#### systemd Service
 ```bash
-# Копіювати файли
+# Copy files
 sudo cp modbusua /usr/bin/
 sudo cp modbusua.conf /etc/modbusua/
 sudo cp modbusua.service /etc/systemd/system/
 
-# Увімкнути сервіс
+# Enable the service
 sudo systemctl enable modbusua
 sudo systemctl start modbusua
 
-# Перевірити статус
+# Check status
 sudo systemctl status modbusua
 ```
 
-#### Пакети DEB/RPM
+#### DEB/RPM Packages
 ```bash
-# Створити DEB пакет
+# Build a DEB package
 cmake --build . --target modbusua-deb
 
-# Створити RPM пакет  
+# Build an RPM package
 cmake --build . --target modbusua-rpm
 ```
 
-## Конфігурація
+## Configuration
 
-Конфігурація здійснюється через файл `modbusua.conf`. Основні об'єкти конфігурації:
+Configuration is done via the `modbusua.conf` file. Main configuration objects:
 
-### Об'єкт Port (Порт)
+### Port Object
 ```ini
 [Port]
 Type=TCP
@@ -137,14 +134,14 @@ Port=502
 Timeout=5000
 ```
 
-### Об'єкт Device (Пристрій)
+### Device Object
 ```ini
 [Device]
 Port=Port1
 Unit=1
 ```
 
-### Налаштування журналювання
+### Logging Settings
 ```ini
 [Log]
 Log.flags=Error|Warning|Info
@@ -152,17 +149,17 @@ Log.file.path=modbusua.log
 Log.file.maxsize=10MB
 ```
 
-## Опції командного рядка
+## Command‑Line Options
 
-| Опція             | Короткий | Параметр    | Опис                                           |
-|:------------------|:---------|:------------|:-----------------------------------------------|
-| `--version`       | `-v`     | -           | Показати версію програми                       |
-| `--help`          | `-?`     | -           | Показати довідку                               |
-| `--file`          | `-f`     | `<filename>`| Файл конфігурації (за замовчуванням modbusua.conf)|
+| Option             | Short | Parameter    | Description                                    |
+|:-------------------|:------|:-------------|:-----------------------------------------------|
+| --version          | -v    | -            | Show program version                           |
+| --help             | -?    | -            | Show help                                       |
+| --file             | -f    | <filename>   | Configuration file (default: modbusua.conf)    |
 
-## Приклади використання
+## Usage Examples
 
-### Базова конфігурація
+### Basic Configuration
 ```ini
 # modbusua.conf
 [System]
@@ -185,37 +182,37 @@ ModbusUnit=1
 Port=4840
 ```
 
-### Підключення до контролера
+### Connecting to a Controller
 ```bash
-# Запуск з конфігураційним файлом
+# Run with a configuration file
 ./modbusua -f /etc/modbusua/modbusua.conf
 
-# Перевірка підключення
+# Check connectivity
 tail -f /var/log/modbusua.log
 ```
 
-## Журналювання та діагностика
+## Logging and Diagnostics
 
-### Рівні журналювання
+### Logging Levels
 
-| Категорія         | Призначення                                                                          
-|:------------------|:-------------------------------------------------------------------------------------
-| `Error`           | Критичні помилки, що можуть призвести до зупинки або некоректної роботи програми     
-| `Warning`         | Некритичні помилки, що не призводять до зупинки програми                             
-| `Info`            | Загальні діагностичні повідомлення                                                   
-| `Trace`           | Діагностичні повідомлення для деталізації роботи програми                            
-| `TraceDetails`    | Деталізовані діагностичні повідомлення для деталізації роботи програми               
-| `CtorDtor`        | Повідомлення про створення/видалення основних елементів програми                     
-| `EntryExit`       | Повідомлення про початок/закінчення роботи важливих функцій програми                 
-| `ThreadStartStop` | Повідомлення про старт/зупинку окремих програмних потоків системи                    
-| `Connection`      | Повідомлення про встановлення/розірвання з’єднання із віддаленими об’єктами по мережі
-| `Item`            | Повідомлення про створення/виконання окремих змінних ItemReference                   
-| `Message`         | Повідомлення про створення/виконання окремих об’єктів-повідомлень (пакетів)          
-| `Protocol`        | Специфічні повідомлення протоколу Modbus
-| `Receive`         | Вхідні мережеві посилки протоколу Modbus                                             
-| `Send`            | Вихідні мережеві посилки протоколу Modbus                                            
+| Category          | Purpose                                                                            |
+|:------------------|:------------------------------------------------------------------------------------|
+| Error             | Critical failures that may cause stoppage or incorrect operation                    |
+| Warning           | Non‑critical issues that do not stop the program                                    |
+| Info              | General diagnostic messages                                                          |
+| Trace             | Detailed diagnostic messages                                                          |
+| TraceDetails      | Extra‑detailed diagnostic messages                                                    |
+| CtorDtor          | Creation/destruction of key program components                                       |
+| EntryExit         | Entry/exit of major functions                                                         |
+| ThreadStartStop   | Start/stop of system threads                                                          |
+| Connection        | Connect/disconnect events to remote objects over the network                          |
+| Item              | Creation/execution of individual ItemReference variables                               |
+| Message           | Creation/execution of message objects (packets)                                      |
+| Protocol          | Modbus‑specific protocol messages                                                     |
+| Receive           | Incoming Modbus network frames                                                        |
+| Send              | Outgoing Modbus network frames                                                        |
 
-### Моніторинг роботи
+### Monitoring
 ```bash
 # Linux - systemd logs
 journalctl -u modbusua -f
@@ -223,40 +220,40 @@ journalctl -u modbusua -f
 # Windows - Event Viewer
 # Applications and Services Logs → modbusua
 
-# Файл журналу
+# Log file
 tail -f modbusua.log | grep Error
 ```
 
-## Розробка та внесок
+## Development and Contribution
 
-### Структура проекту
+### Project Structure
 ```
 modbusua/
-├── src/                   # Вихідний код
-│   ├── core/              # Класи загального користування: string, variant, thread etc
-│   ├── ua/                # OPC UA сервер  
-│   └── device/            # Пристрої Modbus
-├── install/               # Скрипти встановлення
+├── src/                   # Source code
+│   ├── core/              # Common classes: string, variant, thread, etc.
+│   ├── ua/                # OPC UA server
+│   └── device/            # Modbus devices
+├── install/               # Installation scripts
 │   ├── windows/           # WiX MSI installer
 │   └── linux/             # DEB/RPM packages
-├── doc/                   # Документація
-├── examples/              # Приклади конфігурацій
-└── tests/                 # Юніт тести
+├── doc/                   # Documentation
+├── examples/              # Configuration examples
+└── tests/                 # Unit tests
 ```
 
-### Тестування
+### Testing
 ```bash
-# Запуск тестів
+# Run tests
 cmake --build . --target test
 ctest --output-on-failure
 
-# Покриття коду
+# Code coverage (enable tests)
 cmake .. -DCMAKE_BUILD_TYPE=Debug -DCN_TESTS_ENABLED=ON
 ```
 
-## Ліцензія
+## License
 
-Цей проект ліцензований під [MIT License](LICENSE).
+This project is licensed under the [MIT License](LICENSE).
 
 ```
 MIT License
@@ -270,20 +267,20 @@ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software...
 ```
 
-## Додаткові посилання
+## Links
 
-- **Вихідний код**: [https://github.com/serhmarch/modbusua](https://github.com/serhmarch/modbusua)
-- **Документація**: [doc/pages/](doc/pages/)
-- **Звіти про помилки**: [GitHub Issues](https://github.com/serhmarch/modbusua/issues)  
-- **Бібліотека Modbus**: [https://github.com/serhmarch/ModbusLib](https://github.com/serhmarch/ModbusLib)
-- **Бібліотека OPC UA**: [https://github.com/open62541/open62541](https://github.com/open62541/open62541)
-- **Протокол OPC UA**: [https://opcfoundation.org/](https://opcfoundation.org/)
+- Source code: https://github.com/serhmarch/modbusua
+- Documentation: doc/pages/
+- Issue tracking: https://github.com/serhmarch/modbusua/issues
+- Modbus library: https://github.com/serhmarch/ModbusLib
+- OPC UA library: https://github.com/open62541/open62541
+- OPC UA standard: https://opcfoundation.org/
 
-## Автор
+## Author
 
-**serhmarch** - розробник та підтримка проекту.
+**serhmarch** — development and project support.
 
-Сторінка: https://github.com/serhmarch
+Homepage: https://github.com/serhmarch
 
 ---
-*modbusua Gateway - OPC UA to Modbus Gateway*
+modbusua Gateway — OPC UA to Modbus Gateway
