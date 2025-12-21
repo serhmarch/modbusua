@@ -84,7 +84,7 @@ cmake --build . --config Release
 
 #### Install using `cmake --install`
 
-Next `cmake --install` command will are identical:
+Next `cmake --install` commands are identical:
 
 ```cmd
 cd <build_directory> 
@@ -116,12 +116,12 @@ cmake --build . --target modbusua-msi
 
 #### Install using `cmake --install`
 
-Next `cmake --install` command will are identical:
+Next `cmake --install` commands are identical:
 
 ```cmd
 cd <build_directory> 
 cmake --install .
-cmake --install . --prefix "C:\Program Files\modbusua"
+cmake --install . --prefix /
 ```
 
 Build directory is where `cmake_install.cmake` is located.
