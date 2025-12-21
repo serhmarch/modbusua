@@ -68,7 +68,7 @@ if(CN_WIX_CANDLE_EXECUTABLE AND CN_WIX_LIGHT_EXECUTABLE)
             COMMAND "${CN_WIX_LIGHT_EXECUTABLE}" -ext WixUIExtension "*.wixobj" -o "${CN_MSI_PACKAGE}"
             COMMENT "Installing files and build .msi package"
             )
-    add_dependencies(${PROJECT_NAME} "${CN_APP_NAME}" "${CN_APP_NAME}-doc")
+    add_dependencies(${PROJECT_NAME} "${CN_APP_NAME}" "${CN_APP_NAME}-doc-en")
 
     #message(STATUS "MSI installer target 'msi' configured")
     #message(STATUS "Run 'cmake --build . --target msi' to build the installer")

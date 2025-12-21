@@ -30,8 +30,6 @@
 | `DateTime`          | `DateTime`             
 | `ModbusStatus`      | `Int32`              
 | `GatewayStatus`     | `Int32`              
-| `InitReason`        | `Int32`              
-| `InitResult`        | `Int32`              
 
 Тип даних `Timestamp` предаствляє собою мітку часу у форматі UTC (кількість 100-наносек починаючи із 01.01.1601).
 

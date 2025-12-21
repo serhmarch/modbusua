@@ -103,5 +103,5 @@ endif()
 #######################################
 if (NOT CN_TESTS_ENABLED)
     add_subdirectory(doc)
-#    add_subdirectory(install)
+    add_subdirectory(install)
 endif()

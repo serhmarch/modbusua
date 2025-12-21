@@ -82,6 +82,18 @@ cmake --build . --config Release
 
 ### Windows Installation
 
+#### Install using `cmake --install`
+
+Next `cmake --install` command will are identical:
+
+```cmd
+cd <build_directory> 
+cmake --install .
+cmake --install . --prefix "C:\Program Files\modbusua"
+```
+
+Build directory is where `cmake_install.cmake` is located.
+
 #### As a Windows Service
 
 ```cmd
@@ -93,6 +105,7 @@ modbusuaservice.bat -u -n modbusuaService
 ```
 
 #### MSI Installer
+
 Build an MSI installer using the WiX Toolset:
 ```cmd
 cd install/windows
@@ -101,7 +114,21 @@ cmake --build . --target modbusua-msi
 
 ### Linux Installation
 
+#### Install using `cmake --install`
+
+Next `cmake --install` command will are identical:
+
+```cmd
+cd <build_directory> 
+cmake --install .
+cmake --install . --prefix "C:\Program Files\modbusua"
+```
+
+Build directory is where `cmake_install.cmake` is located.
+
 #### systemd Service
+
+Next example shows how to install and enable the `modbusua` service manually:
 ```bash
 # Copy files
 sudo cp modbusua /usr/bin/
@@ -117,6 +144,8 @@ sudo systemctl status modbusua
 ```
 
 #### DEB/RPM Packages
+
+Build DEB/RPM packages:
 ```bash
 # Build a DEB package
 cmake --build . --target modbusua-deb
@@ -125,11 +154,48 @@ cmake --build . --target modbusua-deb
 cmake --build . --target modbusua-rpm
 ```
 
+Install the generated `.deb` package:
+```bash
+sudo dpkg -i modbusua-0.4.0_amd64.deb
+# or
+sudo apt install ./modbusua-0.4.0_amd64.deb
+```
+
+Remove previously installed `modbusua` package:
+```bash
+sudo dpkg -r modbusua # remove package (but not conffiles)
+sudo dpkg -P modbusua # remove everything (even conffiles)
+# or
+sudo apt remove modbusua
+```
+
+Install the generated `.rpm` package:
+```bash
+sudo rpm -i modbusua-0.4.0_amd64.rpm
+# or
+sudo dnf install ./modbusua-0.4.0_amd64.rpm
+```
+
+Remove previously installed `modbusua` package:
+```bash
+sudo rpm -e modbusua # remove package (but not conffiles)
+sudo rpm -e --noscripts modbusua # remove everything (even conffiles)
+# or
+sudo dnf remove modbusua
+```
+
+Add `modbusua` to the autostart and immediately run:
+```bash
+sudo systemctl enable --now modbusua
+```
+
+
 ## Configuration
 
 Configuration is done via the `modbusua.conf` file. Main configuration objects:
 
 ### Port Object
+
 ```ini
 [Port]
 Type=TCP
@@ -139,6 +205,7 @@ Timeout=5000
 ```
 
 ### Device Object
+
 ```ini
 [Device]
 Port=Port1
@@ -146,6 +213,7 @@ Unit=1
 ```
 
 ### Logging Settings
+
 ```ini
 [Log]
 Log.flags=Error|Warning|Info
@@ -158,12 +226,13 @@ Log.file.maxsize=10MB
 | Option             | Short | Parameter    | Description                                    |
 |:-------------------|:------|:-------------|:-----------------------------------------------|
 | --version          | -v    | -            | Show program version                           |
-| --help             | -?    | -            | Show help                                       |
+| --help             | -?    | -            | Show help                                      |
 | --file             | -f    | <filename>   | Configuration file (default: modbusua.conf)    |
 
 ## Usage Examples
 
 ### Basic Configuration
+
 ```ini
 # modbusua.conf
 [System]
@@ -200,23 +269,24 @@ tail -f /var/log/modbusua.log
 ### Logging Levels
 
 | Category          | Purpose                                                                            |
-|:------------------|:------------------------------------------------------------------------------------|
-| Error             | Critical failures that may cause stoppage or incorrect operation                    |
-| Warning           | Non‑critical issues that do not stop the program                                    |
-| Info              | General diagnostic messages                                                          |
-| Trace             | Detailed diagnostic messages                                                          |
-| TraceDetails      | Extra‑detailed diagnostic messages                                                    |
-| CtorDtor          | Creation/destruction of key program components                                       |
-| EntryExit         | Entry/exit of major functions                                                         |
-| ThreadStartStop   | Start/stop of system threads                                                          |
-| Connection        | Connect/disconnect events to remote objects over the network                          |
-| Item              | Creation/execution of individual ItemReference variables                               |
-| Message           | Creation/execution of message objects (packets)                                      |
-| Protocol          | Modbus‑specific protocol messages                                                     |
-| Receive           | Incoming Modbus network frames                                                        |
-| Send              | Outgoing Modbus network frames                                                        |
+|:------------------|:-----------------------------------------------------------------------------------|
+| Error             | Critical failures that may cause stoppage or incorrect operation                   |
+| Warning           | Non‑critical issues that do not stop the program                                   |
+| Info              | General diagnostic messages                                                        |
+| Trace             | Detailed diagnostic messages                                                       |
+| TraceDetails      | Extra‑detailed diagnostic messages                                                 |
+| CtorDtor          | Creation/destruction of key program components                                     |
+| EntryExit         | Entry/exit of major functions                                                      |
+| ThreadStartStop   | Start/stop of system threads                                                       |
+| Connection        | Connect/disconnect events to remote objects over the network                       |
+| Item              | Creation/execution of individual ItemReference variables                           |
+| Message           | Creation/execution of message objects (packets)                                    |
+| Protocol          | Modbus‑specific protocol messages                                                  |
+| Receive           | Incoming Modbus network frames                                                     |
+| Send              | Outgoing Modbus network frames                                                     |
 
 ### Monitoring
+
 ```bash
 # Linux - systemd logs
 journalctl -u modbusua -f
@@ -246,6 +316,7 @@ modbusua/
 ```
 
 ### Testing
+
 ```bash
 # Run tests
 cmake --build . --target test
