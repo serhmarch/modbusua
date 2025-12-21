@@ -15,6 +15,10 @@ The project is built on two open‑source libraries:
 - Modbus (client side): https://github.com/serhmarch/ModbusLib
 - OPC UA (server side): https://github.com/open62541/open62541
 
+Address Space Example:
+
+![](doc/images/modbusua_address_space.png)
+
 ## Key Features
 
 - Modern C++ implementation (C++17 and above)
@@ -37,14 +41,14 @@ The project is built on two open‑source libraries:
 ## System Architecture
 
 ```
-+-------------------+       Modbus     +------------------+    OPC UA    +-----------------+
-|    PLC/Device     | <--------------> | modbusua Gateway | <--------->  |   SCADA Client  |
-|                   |                  |                  |              |                 |
-| * Modbus registers|                  | * Modbus client  |              | * Data ingest   |
-|                   |                  | * OPC UA server  |              | * Archiving     |
-|                   |                  |                  |              | * Visualization |
-|                   |                  |                  |              |                 |
-+-------------------+                  +------------------+              +-----------------+
++--------------------+      Modbus     +------------------+    OPC UA    +-----------------+
+|     PLC/Device     | <-------------> | modbusua Gateway | <----------> |   SCADA Client  |
+|                    |                 |                  |              |                 |
+| - Modbus registers |                 | - Modbus client  |              | - Data ingest   |
+|                    |                 | - OPC UA server  |              | - Archiving     |
+|                    |                 |                  |              | - Visualization |
+|                    |                 |                  |              |                 |
++--------------------+                 +------------------+              +-----------------+
 ```
 
 ## Build and Run
