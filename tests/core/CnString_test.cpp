@@ -33,6 +33,47 @@ TEST(CnStringTest, ConstructorFromCStringTest)
     EXPECT_STREQ(str.data(), cstr);
 }
 
+TEST(CnStringTest, CopyAssigmentOperatorTest)
+{
+    CnString str1(CnCHR("Hello"));
+
+    CnString str2;
+    str2 = str1;
+    EXPECT_EQ(str2.size(), str1.size());
+    EXPECT_FALSE(str2.isNull());
+    EXPECT_FALSE(str2.isEmpty());
+    EXPECT_STREQ(str2.data(), str1.data());
+
+    CnString str3(CnCHR("Hello3"));
+    str3 = str1;
+    EXPECT_EQ(str3.size(), str1.size());
+    EXPECT_FALSE(str3.isNull());
+    EXPECT_FALSE(str3.isEmpty());
+    EXPECT_STREQ(str3.data(), str1.data());
+}
+
+TEST(CnStringTest, fromChars_cstr_test)
+{
+    const char* s = "Hello, World!";
+    CnString str = CnString::fromChars(s);
+    EXPECT_EQ(str.size(), CnStd::strlen(CnSTR("Hello, World!")));
+    EXPECT_FALSE(str.isNull());
+    EXPECT_FALSE(str.isEmpty());
+    EXPECT_STREQ(str.data(), CnSTR("Hello, World!"));
+}
+
+TEST(CnStringTest, fromChars_cstr_len_test)
+{
+    const char* s = "Hello, World!";
+    size_t len = 5;
+    CnString str = CnString::fromChars(s, len);
+    EXPECT_EQ(str.size(), len);
+    EXPECT_FALSE(str.isNull());
+    EXPECT_FALSE(str.isEmpty());
+    EXPECT_EQ(CnStd::strncmp(str.data(), CnSTR("Hello"), len), 0);
+    EXPECT_EQ(str.data()[len], CnCHR('\0'));
+}
+
 TEST(CnStringTest, insert_single_char_at_end_test)
 {
     CnString str(CnCHR("ABCD"));

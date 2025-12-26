@@ -18,11 +18,14 @@
 #include <CnDir.h>
 #include <fstream>
 
+#include <global_test.h>
+
 class CnCfgBuilderTest : public ::testing::Test
 {
 protected:
     void SetUp() override
     {
+        testApp = new CnAppTest();
         builder = new CnCfgBuilder();
         // Get absolute path to current directory
         testDir = CnDir::currentPath();
@@ -42,6 +45,8 @@ protected:
         RemoveTestFile("test_invalid.conf");
         RemoveTestFile("test_multiports.conf");
         RemoveTestFile("test_multidevices.conf");
+
+        delete testApp;
     }
 
     CnString GetTestFilePath(const CnString& fileName) const
@@ -55,6 +60,7 @@ protected:
         std::remove(fullPath.c_str());
     }
 
+    CnApp *testApp;
     CnDir testDir;
     CnCfgBuilder* builder;
 

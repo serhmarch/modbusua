@@ -10,3 +10,11 @@ void CnCfgDevice::setConfig(const Cn::Config &cfg)
         m_config.erase(it);
     }
 }
+
+CnCfgDevice::~CnCfgDevice()
+{
+    for (CnCfgDeviceItem* item : m_items)
+        delete item;
+    m_items.clear();
+    m_hash.clear();
+}

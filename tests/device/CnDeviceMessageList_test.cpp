@@ -179,6 +179,10 @@ TEST(CnDevicePollMessageListTest, PopAndEndMessage)
     
     // Current should be cleared after end
     EXPECT_EQ(list.current(), nullptr);
+
+    // item should still exist. It's not belonging to the message list
+    // so we need to delete it manually
+    delete item;
 }
 
 // =============================================================================

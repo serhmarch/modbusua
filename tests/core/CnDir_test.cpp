@@ -93,6 +93,58 @@ TEST_F(CnDirTest, PathConstructorTest)
     fs::path p = fs::absolute(fs::path(TMP_DIR_PATH));
 }
 
+TEST_F(CnDirTest, CopyConstructorTest)
+{
+    CnDir dir1(TMP_DIR_PATH);
+    CnDir dir2(dir1);
+
+    EXPECT_FALSE(dir2.isNull());
+    EXPECT_EQ(dir2.path(), dir1.path());
+}
+TEST_F(CnDirTest, MoveConstructorTest)
+{
+    CnDir dir1(TMP_DIR_PATH);
+    CnDir dir2(std::move(dir1));
+
+    EXPECT_FALSE(dir2.isNull());
+    EXPECT_EQ(dir2.path(), TMP_DIR_PATH);
+    EXPECT_TRUE(dir1.isNull());
+}
+
+TEST_F(CnDirTest, CopyAssignmentOperatorTest)
+{
+    CnDir dir1(TMP_DIR_PATH);
+
+    CnDir dir2;
+    dir2 = dir1;
+    EXPECT_FALSE(dir2.isNull());
+    EXPECT_EQ(dir2.path(), dir1.path());
+
+    CnDir dir3;
+    dir3 = dir1;
+    EXPECT_FALSE(dir3.isNull());
+    EXPECT_EQ(dir3.path(), dir1.path());
+}
+
+TEST_F(CnDirTest, MoveAssignmentOperatorTest)
+{
+    CnDir dir1(TMP_DIR_PATH);
+    CnDir dir2;
+    dir2 = std::move(dir1);
+
+    EXPECT_FALSE(dir2.isNull());
+    EXPECT_EQ(dir2.path(), TMP_DIR_PATH);
+    EXPECT_TRUE(dir1.isNull());
+
+    CnDir dir3(TMP_DIR_PATH);
+    CnDir dir4(CnSTR("move/assign/test"));
+    dir4 = std::move(dir3);
+
+    EXPECT_FALSE(dir4.isNull());
+    EXPECT_EQ(dir4.path(), TMP_DIR_PATH);
+    EXPECT_TRUE(dir3.isNull());
+}
+
 TEST_F(CnDirTest, exists_test)
 {
     CnDir dir(TMP_DIR_PATH);

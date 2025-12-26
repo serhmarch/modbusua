@@ -70,6 +70,7 @@ CnDateTime &CnDateTime::operator=(CnDateTime &&other)
     {
         auto* dd = getNullCnDateTimePrivate();
         dd->incRef();
+        d->decRef();
         d = other.d;
         other.d = dd;
     }

@@ -270,6 +270,7 @@ CnDir &CnDir::operator=(CnDir &&other)
     {
         auto* dd = getNullCnDirPrivate();
         dd->incRef();
+        d->decRef();
         d = other.d;
         other.d = dd;
     }

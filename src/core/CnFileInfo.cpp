@@ -69,6 +69,7 @@ CnFileInfo &CnFileInfo::operator=(CnFileInfo &&other)
 	{
         auto n = getNullCnFileInfoPrivate();
         n->incRef();
+        d->decRef();
         d = other.d;
         other.d = n;
 	}

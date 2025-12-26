@@ -13,6 +13,8 @@
 #include <gtest/gtest.h>
 #include <app/CnApp.h>
 
+#include <global_test.h>
+
 // =============================================================================
 // Strings Tests
 // =============================================================================
@@ -50,7 +52,23 @@ TEST(CnAppStringsTest, ValuesNotEmpty)
 // Static Methods Tests
 // =============================================================================
 
-TEST(CnAppStaticTest, ApplicationFilePath)
+class CnAppStaticTest : public ::testing::Test
+{
+protected:
+    void SetUp() override
+    {
+        testApp = new CnAppTest();
+    }
+
+    void TearDown() override
+    {
+        delete testApp;
+    }
+
+    CnApp *testApp;
+};
+
+TEST_F(CnAppStaticTest, ApplicationFilePath)
 {
     CnString path = CnApp::applicationFilePath();
     
@@ -58,7 +76,7 @@ TEST(CnAppStaticTest, ApplicationFilePath)
     EXPECT_FALSE(path.isEmpty());
 }
 
-TEST(CnAppStaticTest, ApplicationDirPath)
+TEST_F(CnAppStaticTest, ApplicationDirPath)
 {
     CnString path = CnApp::applicationDirPath();
     
@@ -66,7 +84,7 @@ TEST(CnAppStaticTest, ApplicationDirPath)
     EXPECT_FALSE(path.isEmpty());
 }
 
-TEST(CnAppStaticTest, DefaultFileConf)
+TEST_F(CnAppStaticTest, DefaultFileConf)
 {
     CnDir confDir = CnApp::confDir();
     CnString defConf = CnApp::defaultFileConf();

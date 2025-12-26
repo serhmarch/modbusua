@@ -15,6 +15,7 @@ CnFile::CnFile(const CnString &fileName)
 CnFile::~CnFile()
 {
     this->close();
+    delete d;
 }
 
 CnFile& CnFile::operator<<(const CnString &str)

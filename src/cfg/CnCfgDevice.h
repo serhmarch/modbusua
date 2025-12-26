@@ -29,6 +29,8 @@ class CnCfgDevice : public CnCfgBase
 public:
     using CnCfgBase::CnCfgBase;
 
+    ~CnCfgDevice();
+
 public:
     /// \details Returns the associated communication port name.
     inline const CnString &portName() const { return m_portName; }

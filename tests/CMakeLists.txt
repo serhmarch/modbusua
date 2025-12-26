@@ -195,10 +195,11 @@ set(CN_TESTS_HEADERS
 #    MockModbusPort.h
 #    MockModbusDevice.h
     "include/std/CnStd_filesystem.h"
+    global/global_test.h
     )
 
 set(CN_TESTS_SOURCES
-    global/global_test.cpp
+    #global/global_test.cpp
     core/CnString_test.cpp 
     core/CnTimestamp_test.cpp
     core/CnDateTime_test.cpp
@@ -252,7 +253,8 @@ include_directories(.
                     ../src/core/std
                     ../src/ua
                     ../src/ua/core
-                    "include/std")
+                    "include/std"
+                    global)
 
 add_executable(${CN_TESTS_EXEC_NAME}
                ${GOOGLETEST_SOURCES}

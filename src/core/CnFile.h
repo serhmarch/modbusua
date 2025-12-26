@@ -65,18 +65,6 @@ public:
     ~CnFile();
 
 public:
-    /// \brief Move assignment operator.
-    CnFile &operator=(CnFile &&other);
-
-    /// \brief Copy assignment operator.
-    CnFile &operator=(const CnFile &other);
-
-    /// \brief Inequality comparison operator.
-    bool operator!=(const CnFile &other) const;
-
-    /// \brief Equality comparison operator.
-    bool operator==(const CnFile &other) const;
-
     /// \brief Writes the string data to the file.
     /// \param data The string to write.
     CnFile& operator<<(const CnString &str);

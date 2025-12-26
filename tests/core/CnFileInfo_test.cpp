@@ -36,18 +36,18 @@ protected:
 
     void SetUp() override
     {
-        // Create `tmp/modbusua/tests` in current user's home directory (platform independent)
+        // Create `tmp/chainua/tests` in current user's home directory (platform independent)
         const char* homeEnv = std::getenv("HOME");
         if (!homeEnv) homeEnv = std::getenv("USERPROFILE");
         if (homeEnv && *homeEnv)
         {
             fs::path homePath(homeEnv);
-            fs::path modbusuaTests = homePath / "tmp" / "modbusua" / "tests";
+            fs::path chainuaTests = homePath / "tmp" / "chainua" / "tests";
             std::error_code ec;
-            fs::create_directories(modbusuaTests, ec);
+            fs::create_directories(chainuaTests, ec);
             // Optional: ignore errors; tests should proceed even if creation fails
             prev_cwd_ = fs::current_path();
-            fs::current_path(modbusuaTests, ec);
+            fs::current_path(chainuaTests, ec);
         }
         // Create a temporary configuration for testing
         fs::create_directory(TMP_DIR_PATH);
@@ -132,6 +132,40 @@ TEST_F(CnFileInfoTest, baseName_test)
 
     CnFileInfo i3("test.0.1.txt");
     EXPECT_EQ(i3.baseName(), "test");
+}
+
+TEST_F(CnFileInfoTest, CopyAssignmentOperatorTest)
+{
+    CnFileInfo fileInfo1(TMP_DIR_PATH);
+    CnFileInfo fileInfo2;
+    fileInfo2 = fileInfo1;
+
+    EXPECT_FALSE(fileInfo2.isNull());
+    EXPECT_EQ(fileInfo2.path(), fileInfo1.path());
+
+    CnFileInfo fileInfo3(CnSTR("copy/path/test"));
+    fileInfo3 = fileInfo1;
+
+    EXPECT_FALSE(fileInfo3.isNull());
+    EXPECT_EQ(fileInfo3.path(), fileInfo1.path());
+}
+
+TEST_F(CnFileInfoTest, MoveAssignmentOperatorTest)
+{
+    CnFileInfo fileInfo1(TMP_DIR_PATH);
+    CnFileInfo fileInfo2;
+    fileInfo2 = std::move(fileInfo1);
+
+    EXPECT_TRUE(fileInfo1.isNull());
+    EXPECT_FALSE(fileInfo2.isNull());
+
+    CnFileInfo fileInfo3(TMP_DIR_PATH);
+    CnFileInfo fileInfo4(CnSTR("copy/path/test"));
+    fileInfo4 = std::move(fileInfo3);
+
+    EXPECT_TRUE(fileInfo3.isNull());
+    EXPECT_FALSE(fileInfo4.isNull());
+    EXPECT_EQ(fileInfo4.path(), fileInfo2.path());
 }
 
 TEST_F(CnFileInfoTest, completeBaseName_test)

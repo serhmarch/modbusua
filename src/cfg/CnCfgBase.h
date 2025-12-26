@@ -28,15 +28,20 @@ public:
     /// \details Default constructor. Initializes an empty configuration base.
     CnCfgBase();
 
+    /// \details Virtual destructor to allow proper cleanup via base pointers.
+    virtual ~CnCfgBase();
+
 public:
     /// \details Returns the human-readable configuration name.
     inline const CnString &name() const { return m_name; }
+
     /// \details Sets the human-readable configuration name.
     inline void setName(const CnString &name) { m_name = name; }
 
 public:
     /// \details Returns key-value settings associated with this object.
     virtual const Cn::Config &config() const;
+    
     /// \details Sets key-value settings associated with this object.
     virtual void setConfig(const Cn::Config &config);
 

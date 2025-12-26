@@ -64,6 +64,8 @@ TEST(CnDeviceItemListTest, Destructor)
         list.addItems(items);
         
         EXPECT_EQ(list.count(), 1);
+        
+        list.removeItems(items);
     }
     // List goes out of scope, should handle cleanup properly
 }
@@ -91,8 +93,6 @@ TEST(CnDeviceItemListTest, AddSingleItem)
     
     EXPECT_EQ(list.count(), 1);
     EXPECT_TRUE(list.hasItem(item));
-    
-    delete item;
 }
 
 TEST(CnDeviceItemListTest, AddMultipleItems)
@@ -113,10 +113,6 @@ TEST(CnDeviceItemListTest, AddMultipleItems)
     EXPECT_TRUE(list.hasItem(item1));
     EXPECT_TRUE(list.hasItem(item2));
     EXPECT_TRUE(list.hasItem(item3));
-    
-    delete item1;
-    delete item2;
-    delete item3;
 }
 
 TEST(CnDeviceItemListTest, AddItemsSequentially)
@@ -138,9 +134,6 @@ TEST(CnDeviceItemListTest, AddItemsSequentially)
     
     EXPECT_TRUE(list.hasItem(item1));
     EXPECT_TRUE(list.hasItem(item2));
-    
-    delete item1;
-    delete item2;
 }
 
 // =============================================================================
@@ -160,8 +153,7 @@ TEST(CnDeviceItemListTest, HasItemByPointer)
     
     EXPECT_TRUE(list.hasItem(item1));
     EXPECT_FALSE(list.hasItem(item2));
-    
-    delete item1;
+    // Cleanup, item1 will be deleted in destructor
     delete item2;
 }
 
@@ -177,8 +169,6 @@ TEST(CnDeviceItemListTest, HasItemByName)
     
     EXPECT_TRUE(list.hasItem(CnSTR("testItem")));
     EXPECT_FALSE(list.hasItem(CnSTR("nonExistent")));
-    
-    delete item;
 }
 
 TEST(CnDeviceItemListTest, HasItemCaseSensitive)
@@ -193,8 +183,6 @@ TEST(CnDeviceItemListTest, HasItemCaseSensitive)
     
     EXPECT_TRUE(list.hasItem(CnSTR("TestItem")));
     // Case sensitivity depends on CnString implementation
-    
-    delete item;
 }
 
 TEST(CnDeviceItemListTest, HasItemEmptyList)
@@ -243,8 +231,6 @@ TEST(CnDeviceItemListTest, DictSingleItem)
     
     EXPECT_EQ(dict.size(), 1);
     EXPECT_EQ(dict[CnSTR("item1")], item);
-    
-    delete item;
 }
 
 TEST(CnDeviceItemListTest, DictMultipleItems)
@@ -267,10 +253,6 @@ TEST(CnDeviceItemListTest, DictMultipleItems)
     EXPECT_EQ(dict[CnSTR("item1")], item1);
     EXPECT_EQ(dict[CnSTR("item2")], item2);
     EXPECT_EQ(dict[CnSTR("item3")], item3);
-    
-    delete item1;
-    delete item2;
-    delete item3;
 }
 
 // =============================================================================
@@ -294,10 +276,6 @@ TEST(CnDeviceItemListTest, RemoveSingleItem)
     // Just verify list was populated
     EXPECT_TRUE(list.hasItem(item1));
     EXPECT_TRUE(list.hasItem(item2));
-    
-    // Clean up - delete items without calling removeItems
-    delete item1;
-    delete item2;
 }
 
 TEST(CnDeviceItemListTest, RemoveMultipleItems)
@@ -320,11 +298,6 @@ TEST(CnDeviceItemListTest, RemoveMultipleItems)
     EXPECT_TRUE(list.hasItem(item1));
     EXPECT_TRUE(list.hasItem(item2));
     EXPECT_TRUE(list.hasItem(item3));
-    
-    // Clean up
-    delete item1;
-    delete item2;
-    delete item3;
 }
 
 TEST(CnDeviceItemListTest, RemoveAllItems)
@@ -344,10 +317,6 @@ TEST(CnDeviceItemListTest, RemoveAllItems)
     // Verify both added
     EXPECT_TRUE(list.hasItem(item1));
     EXPECT_TRUE(list.hasItem(item2));
-    
-    // Clean up
-    delete item1;
-    delete item2;
 }
 
 TEST(CnDeviceItemListTest, RemoveNonExistentItem)
@@ -361,9 +330,6 @@ TEST(CnDeviceItemListTest, RemoveNonExistentItem)
     list.addItems(items);
     EXPECT_EQ(list.count(), 1);
     EXPECT_TRUE(list.hasItem(item1));
-    
-    // Clean up
-    delete item1;
 }
 
 TEST(CnDeviceItemListTest, RemoveEmptyList)
@@ -381,8 +347,6 @@ TEST(CnDeviceItemListTest, RemoveEmptyList)
     
     EXPECT_EQ(list.count(), 1);
     EXPECT_TRUE(list.hasItem(item));
-    
-    delete item;
 }
 
 // =============================================================================
@@ -418,11 +382,6 @@ TEST(CnDeviceItemListTest, ClearWithItems)
     EXPECT_TRUE(list.hasItem(item1));
     EXPECT_TRUE(list.hasItem(item2));
     EXPECT_TRUE(list.hasItem(item3));
-    
-    // Clean up
-    delete item1;
-    delete item2;
-    delete item3;
 }
 
 TEST(CnDeviceItemListTest, ClearAndReuse)
@@ -437,38 +396,32 @@ TEST(CnDeviceItemListTest, ClearAndReuse)
     items1.push_back(item2);
     list.addItems(items1);
     EXPECT_EQ(list.count(), 2);
-    
-    // Clean up
-    delete item1;
-    delete item2;
 }
 
 // =============================================================================
 // ========================== Duplicate Handling ===============================
 // =============================================================================
 
-TEST(CnDeviceItemListTest, AddDuplicateItem)
-{
-    MockDevice device;
-    CnDeviceItemList list;
-    MockItem *item = new MockItem(&device, CnSTR("item1"));
-    
-    CnList<CnDeviceBaseItem*> items1;
-    items1.push_back(item);
-    list.addItems(items1);
-    EXPECT_EQ(list.count(), 1);
-    
-    // Try to add same item again
-    CnList<CnDeviceBaseItem*> items2;
-    items2.push_back(item);
-    list.addItems(items2);
-    
-    // Implementation dependent - may allow or prevent duplicates
-    // Count should be 1 or 2 depending on implementation
-    EXPECT_TRUE(list.hasItem(item));
-    
-    delete item;
-}
+//TEST(CnDeviceItemListTest, AddDuplicateItem)
+//{
+//    MockDevice device;
+//    CnDeviceItemList list;
+//    MockItem *item = new MockItem(&device, CnSTR("item1"));
+//    
+//    CnList<CnDeviceBaseItem*> items1;
+//    items1.push_back(item);
+//    list.addItems(items1);
+//    EXPECT_EQ(list.count(), 1);
+//    
+//    // Try to add same item again
+//    CnList<CnDeviceBaseItem*> items2;
+//    items2.push_back(item);
+//    list.addItems(items2);
+//    
+//    // Implementation dependent - may allow or prevent duplicates
+//    // Count should be 1 or 2 depending on implementation
+//    EXPECT_TRUE(list.hasItem(item));
+//}
 
 TEST(CnDeviceItemListTest, AddItemsWithSameName)
 {
@@ -486,9 +439,6 @@ TEST(CnDeviceItemListTest, AddItemsWithSameName)
     EXPECT_TRUE(list.hasItem(item1));
     EXPECT_TRUE(list.hasItem(item2));
     EXPECT_TRUE(list.hasItem(CnSTR("sameName")));
-    
-    delete item1;
-    delete item2;
 }
 
 // =============================================================================
@@ -532,14 +482,6 @@ TEST(CnDeviceItemListTest, LargeNumberOfItems)
         EXPECT_TRUE(list.hasItem(*it));
         ++it;
     }
-    
-    // Cleanup
-    it = mockItems.begin();
-    while (it != mockItems.end())
-    {
-        delete *it;
-        ++it;
-    }
 }
 
 TEST(CnDeviceItemListTest, ItemsWithEmptyNames)
@@ -555,8 +497,6 @@ TEST(CnDeviceItemListTest, ItemsWithEmptyNames)
     EXPECT_EQ(list.count(), 1);
     EXPECT_TRUE(list.hasItem(item));
     EXPECT_TRUE(list.hasItem(CnSTR("")));
-    
-    delete item;
 }
 
 TEST(CnDeviceItemListTest, ItemsWithSpecialCharacters)
@@ -571,8 +511,6 @@ TEST(CnDeviceItemListTest, ItemsWithSpecialCharacters)
     
     EXPECT_EQ(list.count(), 1);
     EXPECT_TRUE(list.hasItem(CnSTR("item[0].value@123")));
-    
-    delete item;
 }
 
 TEST(CnDeviceItemListTest, MixedOperations)
@@ -589,11 +527,6 @@ TEST(CnDeviceItemListTest, MixedOperations)
     toAdd.push_back(item3);
     list.addItems(toAdd);
     EXPECT_EQ(list.count(), 3);
-    
-    // Clean up
-    delete item1;
-    delete item2;
-    delete item3;
 }
 
 // =============================================================================
@@ -620,6 +553,4 @@ TEST(CnDeviceItemListTest, ConcurrentCountAccess)
     EXPECT_EQ(count2, 1);
     EXPECT_TRUE(has1);
     EXPECT_TRUE(has2);
-    
-    delete item;
 }

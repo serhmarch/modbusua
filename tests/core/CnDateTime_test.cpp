@@ -16,13 +16,13 @@
 static inline CnDateTime createDateTimeForTest(bool local) 
 { 
     return CnDateTime(TEST_DATETIME_year        ,
-                           TEST_DATETIME_month       ,
-                           TEST_DATETIME_day         ,
-                           TEST_DATETIME_hour        ,
-                           TEST_DATETIME_minute      ,
-                           TEST_DATETIME_second      ,
-                           TEST_DATETIME_milliseconds,
-                           local);
+                      TEST_DATETIME_month       ,
+                      TEST_DATETIME_day         ,
+                      TEST_DATETIME_hour        ,
+                      TEST_DATETIME_minute      ,
+                      TEST_DATETIME_second      ,
+                      TEST_DATETIME_milliseconds,
+                      local);
 }
 
 static inline bool compareForTest(const CnDateTime& dt1, bool local) 
@@ -94,10 +94,14 @@ TEST(CnDateTimeTest, MoveConstructorTest)
 TEST(CnDateTimeTest, CopyAssignmentOperatorTest)
 {
     CnDateTime dt1 = createDateTimeForTest(true);
+
     CnDateTime dt2;
     dt2 = dt1;
-
     EXPECT_TRUE(compareForTest(dt1, dt2));
+    
+    CnDateTime dt3(2030, 1, 1, 0, 0, 0, 0, false);
+    dt3 = dt1;
+    EXPECT_TRUE(compareForTest(dt3, dt2));
 }
 
 TEST(CnDateTimeTest, MoveAssignmentOperatorTest)
@@ -108,6 +112,13 @@ TEST(CnDateTimeTest, MoveAssignmentOperatorTest)
 
     EXPECT_TRUE(compareForTest(dt2, true));
     EXPECT_TRUE(dt1.isNull());
+
+    CnDateTime dt3 = createDateTimeForTest(true);
+    CnDateTime dt4(2030, 1, 1, 0, 0, 0, 0, false);
+    dt4 = std::move(dt3);
+
+    EXPECT_TRUE(compareForTest(dt4, true));
+    EXPECT_TRUE(dt3.isNull());
 }
 
 TEST(CnDateTimeTest, InvalidFormatSpecifierTest)

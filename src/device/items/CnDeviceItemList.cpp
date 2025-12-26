@@ -8,6 +8,9 @@ CnDeviceItemList::CnDeviceItemList()
 
 CnDeviceItemList::~CnDeviceItemList()
 {
+    for (CnDeviceBaseItem *item : m_list)
+        delete item;
+    m_list.clear();
 }
 
 size_t CnDeviceItemList::count() const

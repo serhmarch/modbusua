@@ -92,6 +92,7 @@ CnString& CnString::operator=(CnString &&other)
     if (this != &other)
     {
         nullCnStringData.incRef();
+        d->decRef();
         d = other.d;
         other.d = &nullCnStringData;
     }
@@ -272,18 +273,10 @@ CnString& CnString::insert(size_t index, size_t count, CnChar ch)
     newData[sz + count] = CnCHR('\0');
 
     // replace data
-    if (d->ref > 1)
-    {
-        d->decRef();
-        d = new CnStringPrivate();
-        d->data = newData;
-        d->size = newSz;
-    }
-    else
-    {
-        d->data = newData;
-        d->size = newSz;
-    }
+    d->decRef();
+    d = new CnStringPrivate();
+    d->data = newData;
+    d->size = newSz;
     return *this;
 }
 
@@ -308,18 +301,10 @@ CnString& CnString::insert(size_t index, const CnChar* s, size_t count)
         memcpy(newData + index + count, d->data + index, (sz - index) * sizeof(CnChar));
     newData[sz + count] = CnCHR('\0');
 
-    if (d->ref > 1)
-    {
-        d->decRef();
-        d = new CnStringPrivate();
-        d->data = newData;
-        d->size = sz + count;
-    }
-    else
-    {
-        d->data = newData;
-        d->size = sz + count;
-    }
+    d->decRef();
+    d = new CnStringPrivate();
+    d->data = newData;
+    d->size = sz + count;
     return *this;
 }
 
@@ -336,31 +321,26 @@ CnString& CnString::erase(size_t index, size_t count)
     if (index + count > sz)
         count = sz - index;
 
-    size_t newSize = sz - count;
+    size_t newSz = sz - count;
     CnChar* newData = nullptr;
-    if (newSize > 0)
+    if (newSz > 0)
     {
-        newData = (CnChar*)calloc(newSize + 1, sizeof(CnChar));
+        newData = (CnChar*)calloc(newSz + 1, sizeof(CnChar));
         if (index > 0)
             memcpy(newData, d->data, index * sizeof(CnChar));
         if (index + count < sz)
             memcpy(newData + index, d->data + index + count, (sz - index - count) * sizeof(CnChar));
-        newData[newSize] = CnCHR('\0');
+        newData[newSz] = CnCHR('\0');
     }
 
     if (newData == nullptr)
         clear();
-    else if (d->ref > 1)
+    else
     {
         d->decRef();
         d = new CnStringPrivate();
         d->data = newData;
-        d->size = newSize;
-    }
-    else
-    {
-        d->data = newData;
-        d->size = newSize;
+        d->size = newSz;
     }
     return *this;
 }
@@ -516,7 +496,8 @@ void CnString::resize(size_t size)
     if (size > copySize)
         memset(newData + copySize, 0, (size - copySize) * sizeof(CnChar));
     newData[size] = CnCHR('\0');
-    //d->decRef();
+    d->decRef();
+    d = new CnStringPrivate();
     d->data = newData;
     d->size = size;
 }

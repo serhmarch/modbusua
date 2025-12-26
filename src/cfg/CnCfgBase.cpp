@@ -5,6 +5,8 @@ CnCfgBase::CnCfgBase()
     CN_REF_INIT
 }
 
+CnCfgBase::~CnCfgBase() = default;
+
 const Cn::Config &CnCfgBase::config() const
 {
     return m_config;
