@@ -397,6 +397,12 @@ TEST_F(CnFileInfoTest, absolutePath_test)
     CnString expected3 = cwd + CN_PATH_SEP + CnSTR("relative/path/../to");
     CnString value3 = info3.absolutePath();
     EXPECT_EQ(value3, expected3);
+
+    CnString file4 = cwd + CnSTR("/path/../to/file.txt");
+    CnFileInfo info4(file4);
+    CnString expected4 = cwd + CnSTR("/path/../to");
+    CnString value4 = info4.absolutePath();
+    EXPECT_EQ(value4, expected4);
 }
 
 TEST_F(CnFileInfoTest, canonicalFilePath_test)

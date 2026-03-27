@@ -119,9 +119,13 @@ void CnLoggerFile::setConfigInner(const Cn::Config &config)
     if (!ok)
         m_maxSize = CNLOGFILE_MAXSIZE;
     
-    CnString abs = CnApp::logDir().absoluteFilePath(m_filename);
+    CnDir mainLogDir = CnApp::logDir();
+    CnString abs = mainLogDir.absoluteFilePath(m_filename);
     CnFileInfo fi(abs);
-    m_logDir = fi.absolutePath();
+    CnString absDir = fi.absolutePath();
+    CnString relDirPath = mainLogDir.relativeFilePath(absDir);
+    mainLogDir.mkpath(relDirPath);
+    m_logDir = absDir;
     m_baseFilename = fi.completeBaseName();
     m_suffix = fi.suffix();
     rotateIfNeeded();
@@ -186,7 +190,7 @@ CnString CnLoggerFile::getLogFilePath(int index) const
         CnStd::stringstream ss;
         ss << m_logDir.data() << CnDir::separator() << m_baseFilename.data() << CnCHR('_');
         ss << std::hex << std::uppercase << std::setw(3) << std::setfill(CnCHR('0')) << index;
-        ss << m_suffix.data();
+        ss << CnCHR('.') << m_suffix.data();
         return CnString(ss.str().data());
     }
     else

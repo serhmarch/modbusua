@@ -22,6 +22,12 @@ CnFileInfoPrivate* createCnFileInfoPrivate(const CnFileInfoPrivate* other) { ret
 
 const size_t CnFileInfo::RootPathBaseLength = 1; // "/" or "\\"
 
+CnString CnFileInfo::rootPath()
+{
+    // return main drive root, e.g., "C:/"
+    return CnString(CnSTR("/"));
+}
+
 // Normalizes root paths for Unix: '///', '\\\\', '/\\'
 // becomes '/'
 CnString CnFileInfo::normalizeRootPath(const CnString &path)
@@ -72,7 +78,7 @@ CnString CnFileInfo::absolutePath() const
     if (this->isNull())
         return CnString();
     if (d_cast(d)->isAbsolute())
-        return d->filePath;
+        return d->dirName;
     return CnDir::cwd() + CN_PATH_SEP + d->dirName;
 }
 

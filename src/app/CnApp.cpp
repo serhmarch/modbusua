@@ -186,8 +186,8 @@ void CnApp::commandReloadConfig()
 int CnApp::exec(int argc, char *argv[])
 {
     m_loggers.manager->setName(m_name);
-    m_options.service.name = m_name;
     parseArgs(argc, argv);
+    beginToStart();
     Cn::StatusCode status = serviceStart();
     if (status == Cn::Status_BadNoService)
     {
@@ -246,6 +246,31 @@ int CnApp::run()
     return 0;
 }
 
+void CnApp::beginToStart()
+{
+    auto sLogDir = getLogDir();
+    if (CnFileInfo::isAbsolutePath(sLogDir))
+    {
+        if (m_logDir.path() != sLogDir)
+            m_logDir.setPath(sLogDir);
+        if (!m_logDir.exists())
+        {
+            while (!m_logDir.exists() && m_logDir.cdUp())
+                ;
+            if (m_logDir.exists())
+            {
+                auto relPath = m_logDir.relativeFilePath(sLogDir);
+                m_logDir.mkpath(relPath);
+                m_logDir.cd(relPath);
+            }
+        }
+    }
+    else
+    {
+        m_logDir.mkpath(sLogDir);
+        m_logDir.cd(sLogDir);
+    }
+}
 
 void CnApp::parseArgs(int argc, char *argv[])
 {
@@ -257,19 +282,29 @@ void CnApp::parseArgs(int argc, char *argv[])
             printVersion();
             exit(0);
         }
-        if (!std::strcmp(opt, "--help") || !std::strcmp(opt, "-?"))
+        if (!std::strcmp(opt, "--help") || !std::strcmp(opt, "-h") || !std::strcmp(opt, "-?"))
         {
             printHelp();
             exit(0);
         }
-        if (!std::strcmp(opt, "--install-name") || !std::strcmp(opt, "-n"))
+        if (!std::strcmp(opt, "--service-name") || !std::strcmp(opt, "-s"))
         {
             if (++i >= argc)
             {
                 printHelp();
                 std::exit(1);
             }
-            m_options.service.name = Cn::toString(argv[i]);
+            m_options.serviceName = Cn::toString(argv[i]);
+            continue;
+        }
+        if (!std::strcmp(opt, "--logdir"))
+        {
+            if (++i >= argc)
+            {
+                printHelp();
+                std::exit(1);
+            }
+            m_options.logdir = Cn::toString(argv[i]);
             continue;
         }
         if (!std::strcmp(opt, "--file") || !std::strcmp(opt, "-f"))
@@ -303,15 +338,13 @@ void CnApp::printVersion()
 
 void CnApp::printHelp()
 {
-    CnStd::cout << CnSTR("usage: ") << m_name << CnSTR(" [options]") << std::endl;
-    std::cout << "options:\n"
-                 "  -v, --version             show version\n"
-                 "  -?, --help                show this help\n"
-                 "  -i, --install             install service\n"
-                 "  -u, --uninstall           uninstall service\n"
-                 "  -n, --install-name <name> name of the service to install (default is " << m_name << ")\n"
-                 "  -f, --file <file>         configuration file name, default: ";
-    CnStd::cout << m_defaultFileConf << std::endl;
+    CnStd::cout << CnSTR("usage: ") << m_name << CnSTR(" [options]") << CnSTR("\n");
+    CnStd::cout << CnSTR("options:\n")
+                   CnSTR("  -v, --version             show version\n")
+                   CnSTR("  -h, -?, --help            show this help\n")
+                   CnSTR("  -s, --service-name <name> service name, default: ") << m_name.data() << CnSTR("\n") <<
+                   CnSTR("      --logdir <dir>        directory for log files, default: ") << m_defaultLogDirPath << CnSTR("\n") <<
+                   CnSTR("  -f, --file <file>         configuration file name, default: ") << m_defaultFileConf << CnSTR("\n");
 }
 
 void CnApp::processStopThreads()
@@ -361,6 +394,20 @@ void CnApp::finalize()
     //for (CnLogger *logger : m_loggers.list)
     //    delete logger;
     m_loggers.cache.clear();
+}
+
+CnString CnApp::getServiceName() const
+{
+    if (m_options.serviceName.size())
+        return m_options.serviceName;
+    return m_name;
+}
+
+CnString CnApp::getLogDir() const
+{
+    if (m_options.logdir.size())
+        return m_options.logdir;
+    return m_defaultLogDirPath;
 }
 
 CnCfgProject *CnApp::loadConfig()

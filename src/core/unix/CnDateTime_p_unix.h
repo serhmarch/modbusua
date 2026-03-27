@@ -20,7 +20,10 @@ public:
         dt_milliseconds = other.dt_milliseconds;
     }
 
-    ~CnDateTimePrivateUnix() override = default;
+    ~CnDateTimePrivateUnix() override
+    {
+    }
+
 
 public:
     inline uint16_t year() const { return dt.tm_year+1900; }

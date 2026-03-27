@@ -317,6 +317,8 @@ void CnDir::setPath(const CnString &path)
 
 CnString CnDir::absoluteFilePath(const CnString &fileName) const
 {
+    if (CnFileInfo::isAbsolutePath(fileName))
+        return CnFileInfo::normalizePathSeparators(fileName);
     CnString path = d->info.absoluteFilePath();
     if (path.ends_with(CN_PATH_SEP))
         return path + CnFileInfo::normalizePathSeparators(fileName);

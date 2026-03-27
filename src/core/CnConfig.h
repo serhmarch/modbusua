@@ -14,7 +14,7 @@
 /*
    Patch part of gateway version
 */
-#define CN_VERSION_PATCH 0
+#define CN_VERSION_PATCH 1
 
 
 /*

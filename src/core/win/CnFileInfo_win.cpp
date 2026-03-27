@@ -41,6 +41,7 @@ typedef struct _REPARSE_DATA_BUFFER {
 #include <direct.h>     // for _getcwd
 #include <sys/stat.h>   // for _stat
 #include <cstring>
+#include <cctype>
 
 #include <CnDir.h>
 
@@ -55,6 +56,19 @@ CnFileInfoPrivate* createCnFileInfoPrivate() { return new CnFileInfoPrivateWin()
 CnFileInfoPrivate* createCnFileInfoPrivate(const CnFileInfoPrivate* other) { return new CnFileInfoPrivateWin(*static_cast<const CnFileInfoPrivateWin*>(other)); }
 
 const size_t CnFileInfo::RootPathBaseLength = 3; // e.g., "C:/"
+
+CnString CnFileInfo::rootPath()
+{
+    // return main drive root, e.g., "C:/"
+    char rootPath[RootPathBaseLength+1] = "C:/";
+    char systemDir[MAX_PATH];
+    auto res = GetSystemDirectoryA(systemDir, MAX_PATH);
+    if (res)
+    {
+        rootPath[0] = std::toupper(systemDir[0]);
+    }
+    return CnString::fromChars(rootPath);
+}
 
 // Normalizes root paths for Windows: 'C:\', 'C:', 'c:', 'c:////'  
 // becomes 'C:/'
@@ -111,7 +125,7 @@ CnString CnFileInfo::absolutePath() const
     if (this->isNull())
         return CnString();
     if (d_cast(d)->isAbsolute())
-        return d->filePath;
+        return d->dirName;
     return CnDir::cwd() + CN_PATH_SEP + d->dirName;
 }
 

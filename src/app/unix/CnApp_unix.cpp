@@ -87,7 +87,7 @@ CnString CnApp::applicationDirPath()
 
 Cn::StatusCode CnApp::serviceStart()
 {
-    CnString serviceName = m_options.service.name;
+    CnString serviceName = getServiceName();
 
     // Determine if prog was started by systemd
     // When starting service, systemd set INVOCATION_ID env variable
@@ -99,7 +99,7 @@ Cn::StatusCode CnApp::serviceStart()
         if (r == SIG_ERR)
             CN_LOG_Warning(CnSTR("Can't set signal handler for SIGHUP. Error: %s"), Cn::getLastErrorText().data());
         createLoggerConsole();
-        CN_LOG_Info(CnSTR("Can't start '%s' as service. Switch into console mode"), m_name.data());
+        CN_LOG_Info(CnSTR("Can't start '%s' as service '%s'. Switch into console mode"), m_name.data(), serviceName.data()  );
         return Cn::Status_BadNoService;
     }
 
@@ -121,6 +121,7 @@ Cn::StatusCode CnApp::serviceStart()
     if (r == SIG_ERR)
         CN_LOG_Warning(CnSTR("Can't set signal handler for SIGHUP. Error: %s"), Cn::getLastErrorText().data());
 
+    CN_LOG_Info(CnSTR("Start '%s' as service '%s'"), m_name.data(), serviceName.data());
     int res = this->run();
     if (res)
         return Cn::Status_Bad;
@@ -129,13 +130,9 @@ Cn::StatusCode CnApp::serviceStart()
 
 void CnApp::initSpec()
 {
-    m_confDir.setPath(CnSTR("/etc"));
-    m_confDir.mkpath(m_name);
-    m_confDir.cd(m_name);
-
-    m_logDir.setPath(CnSTR("/var/log"));
-    m_logDir.mkpath(m_name);
-    m_logDir.cd(m_name);
+    m_defaultLogDirPath = CnSTR("/var/log/") + m_name;
+    m_logDir.setPath(m_defaultLogDirPath);
+    m_confDir.setPath(CnSTR("/etc/") + m_name);
 }
 
 void CnApp::finalSpec()

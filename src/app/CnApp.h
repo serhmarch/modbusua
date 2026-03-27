@@ -144,25 +144,25 @@ public:
 
 public:
     /// \details Returns enabled log outputs (system/console/file).
-    CnStringList logOutputs() const { CnCriticalSectionLocker _(&m_cs); return innerLogOutputs          (); }
+    CnStringList logOutputs() const { CnCriticalSectionLocker _(&m_cs); return innerLogOutputs(); }
     
     /// \details Returns the system log message format string.
-    CnString logSystemFormat() const { CnCriticalSectionLocker _(&m_cs); return innerLogSystemFormat     (); }
+    CnString logSystemFormat() const { CnCriticalSectionLocker _(&m_cs); return innerLogSystemFormat(); }
     
     /// \details Returns the system log time format string.
-    CnString logSystemTimeformat() const { CnCriticalSectionLocker _(&m_cs); return innerLogSystemTimeformat (); }
+    CnString logSystemTimeformat() const { CnCriticalSectionLocker _(&m_cs); return innerLogSystemTimeformat(); }
     
     /// \details Returns the console log message format string.
-    CnString logConsoleFormat() const { CnCriticalSectionLocker _(&m_cs); return innerLogConsoleFormat    (); }
+    CnString logConsoleFormat() const { CnCriticalSectionLocker _(&m_cs); return innerLogConsoleFormat(); }
     
     /// \details Returns the console log time format string.
     CnString logConsoleTimeformat() const { CnCriticalSectionLocker _(&m_cs); return innerLogConsoleTimeformat(); }
     
     /// \details Returns the file log message format string.
-    CnString logFileFormat() const { CnCriticalSectionLocker _(&m_cs); return innerLogFileFormat       (); }
+    CnString logFileFormat() const { CnCriticalSectionLocker _(&m_cs); return innerLogFileFormat(); }
     
     /// \details Returns the file log time format string.
-    CnString logFileTimeformat() const { CnCriticalSectionLocker _(&m_cs); return innerLogFileTimeformat   (); }
+    CnString logFileTimeformat() const { CnCriticalSectionLocker _(&m_cs); return innerLogFileTimeformat(); }
 
 public: // config
     /// \details Returns the current configuration snapshot.
@@ -194,6 +194,7 @@ public:
     int run();
 
 protected:
+    void beginToStart();
     Cn::StatusCode serviceStart();
 
 protected:
@@ -207,6 +208,10 @@ protected:
     virtual void initialize(CnCfgProject *project);
     virtual void beginToFinalize();
     virtual void finalize();
+
+protected:
+    CnString getServiceName() const;
+    CnString getLogDir() const;
 
 protected:
     CnCfgProject *loadConfig();
@@ -274,13 +279,12 @@ protected:
 
     struct 
     {
-        CnString file;
-        struct 
-        {
-            CnString name;
-        } service;
+        CnString file  ;
+        CnString logdir;
+        CnString serviceName;
     } m_options;
     CnString m_defaultFileConf;
+    CnString m_defaultLogDirPath;
     
     struct
     {

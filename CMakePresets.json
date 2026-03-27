@@ -24,9 +24,9 @@
         {
             "name": "Win64-MSVC",
             "displayName": "Win64 Config Default MSVC",
-            "description": "Using compilers for Visual Studio 17 2022 (x64 architecture)",
+            "description": "Using compilers for Visual Studio 18 2026 (x64 architecture)",
             "inherits": "Win-Base",
-            "generator": "Visual Studio 17 2022",
+            "generator": "Visual Studio 18 2026",
             "toolset": "host=x64",
             "architecture": "x64",
             "binaryDir": "$env{USERPROFILE}/tmp/cmake/modbusua/bin/Win64",
@@ -39,9 +39,9 @@
         {
             "name": "Win32-MSVC",
             "displayName": "Win32 Config Default MSVC",
-            "description": "Using compilers for Visual Studio 17 2022 (x64_x86 architecture)",
+            "description": "Using compilers for Visual Studio 18 2026 (x64_x86 architecture)",
             "inherits": "Win-Base",
-            "generator": "Visual Studio 17 2022",
+            "generator": "Visual Studio 18 2026",
             "toolset": "host=x64",
             "architecture": "win32",
             "binaryDir": "$env{USERPROFILE}/tmp/cmake/modbusua/bin/Win32",

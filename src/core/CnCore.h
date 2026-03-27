@@ -57,14 +57,14 @@
 #include <thread>
 #include <atomic>
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(WIN32)
 
 #include <Windows.h>
 #include <sysinfoapi.h>
 
 #define CN_PATH_MAX MAX_PATH
 
-#else // WIN32
+#else // _WIN32 || WIN32
 
 #include <ctime>
 #include <pthread.h>
@@ -72,7 +72,7 @@
 
 #define CN_PATH_MAX PATH_MAX
 
-#endif // WIN32
+#endif // _WIN32 || WIN32
 
 
 #ifdef CN_USE_WSTRING

@@ -51,6 +51,12 @@ public:
     /// \return The normalized path as a string.
     inline static CnString normalizePathSeparators(const CnString &path) { return normalizePathSeparators(path.data(), path.length()); }
 
+    /// \brief Returns the root path for the operating system.
+    ///
+    /// \details On Windows, returns path to root drive (e.g., `C:/`).
+    /// On Unix, returns root paths as "/" string.
+    static CnString rootPath();
+
     /// \brief Normalizes root paths for operating system conventions.
     ///
     /// \details On Windows, paths like 'C:\', 'C:', 'c:', 'c:////' are normalized to 'C:/'.

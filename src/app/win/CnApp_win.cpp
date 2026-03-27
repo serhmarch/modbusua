@@ -40,7 +40,7 @@ void WINAPI GatewayServiceControlHandler(DWORD dwCtrlCode)
 }
 
 // GatewayServiceMain: Main service function
-void WINAPI GatewayServiceMain(DWORD /*argc*/, LPTSTR* /*argv*/)
+void WINAPI GatewayServiceMain(DWORD argc, LPTSTR* argv)
 {
     CnApp *sys = CnApp::global();
     sys->moveToThread(CnThread::currentThread());
@@ -51,6 +51,17 @@ void WINAPI GatewayServiceMain(DWORD /*argc*/, LPTSTR* /*argv*/)
     {
         return;
     }
+    // Get service name
+    //CnString serviceName;
+    //if (argc > 0 && argv && argv[0])
+    //{
+    //    serviceName = CnString(argv[0]);
+    //}
+    //else
+    //{
+    //    serviceName = sys->name();
+    //}
+    //CN_LOG_Info(CnSTR("Start '%s' as service '%s'"), sys->name().data(), serviceName.data());
 
     // Initialize service status
     ServiceStatus.dwServiceType = SERVICE_WIN32_OWN_PROCESS;
@@ -99,7 +110,7 @@ CnString CnApp::applicationDirPath()
 
 Cn::StatusCode CnApp::serviceStart()
 {
-    CnString serviceName = m_options.service.name;
+    CnString serviceName = getServiceName();
 
     SERVICE_TABLE_ENTRY ServiceTable[] = {
         { const_cast<LPTSTR>(serviceName.data()), (LPSERVICE_MAIN_FUNCTION)GatewayServiceMain },
@@ -112,26 +123,24 @@ Cn::StatusCode CnApp::serviceStart()
         {
             // Note: This error is returned if the program is being run as a console application rather than as a service.
             createLoggerConsole();        
-            CN_LOG_Info(CnSTR("Can't start '%s' as service. Switch into console mode"), m_name.data());
+            CN_LOG_Info(CnSTR("Can't start '%s' as service '%s'. Switch into console mode"), m_name.data(), serviceName.data());
             return Cn::Status_BadNoService;
         }
         createLoggerService();
         CN_LOG_Error(CnSTR("Error starting service control dispatcher: %d"), GetLastError());
         return Cn::Status_Bad;
-    }    
-    createLoggerService();        
+    }
+    this->moveToThread(CnThread::currentThread());    
     return Cn::Status_Good;
 }
 
 void CnApp::initSpec()
 {
+    m_defaultLogDirPath = CnSTR("log");
+    m_logDir = this->applicationDir();
     m_confDir = this->applicationDir().path() + CnSTR("/conf");
-
-    m_logDir = this->applicationDir().path() + CnSTR("/log");
-    m_logDir.mkpath(CnString());
 }
 
 void CnApp::finalSpec()
 {
 }
-
