@@ -10,6 +10,9 @@ set(CN_DEB_PACKAGE_DIR "${CN_DEB_DIR}/${CN_APP_NAME}")
 
 message(STATUS "CN-DEB: Create '${CN_DEB_PACKAGE}' for project '${PROJECT_NAME}'")
 
+message(STATUS "CN-DEB: Clear content of '${CN_DEB_DIR}' directory")
+file(REMOVE_RECURSE "${CN_DEB_DIR}")
+
 configure_file(${CMAKE_CURRENT_LIST_DIR}/DEBIAN.in.d/control
 			   ${CN_DEB_PACKAGE_DIR}/DEBIAN/control
 			   FILE_PERMISSIONS OWNER_READ OWNER_WRITE 

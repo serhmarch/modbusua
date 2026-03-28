@@ -21,19 +21,26 @@
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
     <!-- License Configuration -->
     <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+
+    <!-- Detect existing conf file to avoid overwriting on install/upgrade -->
+    <Property Id="CONF_EXISTS">
+      <DirectorySearch Id="ConfDirSearch" Path="[INSTALLFOLDER]\conf">
+        <FileSearch Id="ConfFileSearch" Name="${CN_APP_CONF}" />
+      </DirectorySearch>
+    </Property>
     
     <!-- Add/Remove Programs Properties -->
     <!-- <Property Id="ARPPRODUCTICON" Value="ApplicationIcon" /> -->
-    <!-- <Property Id="ARPURLINFOABOUT" Value="https://github.com/serhmarch/modbusua" /> -->
+    <!-- <Property Id="ARPURLINFOABOUT" Value="https://github.com/serhmarch/${CN_APP_NAME}" /> -->
     <!-- <Property Id="ARPNOREPAIR" Value="yes" Secure="yes" /> -->
     <!-- <Property Id="ARPNOMODIFY" Value="yes" Secure="yes" /> -->
-    <!-- <Property Id="ARPHELPLINK" Value="https://github.com/serhmarch/modbusua/issues" /> -->
+    <!-- <Property Id="ARPHELPLINK" Value="https://github.com/serhmarch/${CN_APP_NAME}/issues" /> -->
     <!-- <Property Id="ARPCONTACT" Value="${CN_APP_VENDOR}" /> -->
     <!--
-    <WixVariable Id="WixUIExclamationIco" Value="modbusua.ico" />
-    <WixVariable Id="WixUIInfoIco" Value="modbusua.ico" />
-    <WixVariable Id="WixUINewIco" Value="modbusua.ico" />
-    <WixVariable Id="WixUIUpIco" Value="modbusua.ico" />
+    <WixVariable Id="WixUIExclamationIco" Value="${CN_APP_NAME}.ico" />
+    <WixVariable Id="WixUIInfoIco" Value="${CN_APP_NAME}.ico" />
+    <WixVariable Id="WixUINewIco" Value="${CN_APP_NAME}.ico" />
+    <WixVariable Id="WixUIUpIco" Value="${CN_APP_NAME}.ico" />
     -->
     <!-- Define installation directory -->
     <Directory Id="TARGETDIR" Name="SourceDir">
@@ -91,15 +98,21 @@
 
       <!-- Service install/uninstall script -->
       <Component Id="cmpServiceInstallBatScript" Guid="FC463803-9A8A-4E6C-B03C-F8C52ADC5485" Directory="INSTALLFOLDER">
-        <RemoveFile Id="RemoveOldBatScript" Name="${CN_APP_NAME}service.bat" On="install" />
-        <File Id="ServiceBatScript" Source="${CN_APP_NAME}service.bat" />        
+        <RemoveFile Id="RemoveOldBatScript" Name="${CN_APP_NAME}s.bat" On="install" />
+        <File Id="ServiceBatScript" Source="${CN_APP_NAME}s.bat" />        
       </Component>
 
-      <!-- Config file in conf subfolder -->
-      <Component Id="cmpProjectConfig" Guid="C1B2A3D4-E5F6-4A5B-9C8D-7E6F5A4B3C2F" Directory="confFolder">
+      <!-- Ensure conf folder persists across uninstall -->
+      <Component Id="cmpCreateConfFolder" Guid="E2D3C4B5-A6F7-48B9-9C0D-1E2F3A4B5C6D" Directory="confFolder" Permanent="yes">
+        <CreateFolder />
+      </Component>
+
+      <!-- Config file in conf subfolder, keep across uninstall and skip install if file already exists -->
+      <Component Id="cmpProjectConfig" Guid="C1B2A3D4-E5F6-4A5B-9C8D-7E6F5A4B3C2F" Directory="confFolder" Permanent="yes">
+        <Condition><![CDATA[NOT CONF_EXISTS]]></Condition>
         <File Id="ProjectConf" 
-              Source="conf/${CN_APP_CONF}" 
-              KeyPath="yes" />
+          Source="conf/${CN_APP_CONF}" 
+          KeyPath="yes" />
       </Component>
 
       <!-- Help file in doc subfolder -->
@@ -109,6 +122,8 @@
         <File Id="ProjectChm" 
               Source="doc/${CN_APP_NAME}.chm" 
               KeyPath="yes" />
+        <File Id="ProjectChangelog"
+              Source="doc/changelog.md" />
       </Component>
 
       <!-- log folder -->

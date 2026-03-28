@@ -1,4 +1,4 @@
-# modbusua MSI Build Configuration
+# MSI Build Configuration
 # CMakeLists.txt for Windows installer using WiX Toolset
 
 cmake_minimum_required(VERSION 3.13) # 2.2 - case insensitive syntax
@@ -39,11 +39,14 @@ if(CN_WIX_CANDLE_EXECUTABLE AND CN_WIX_LIGHT_EXECUTABLE)
 
     message(STATUS "CN-MSI: Create '${CN_MSI_PACKAGE}' for project '${PROJECT_NAME}'")
 
-    configure_file(${CMAKE_CURRENT_LIST_DIR}/${CN_APP_NAME}.wxs.in
+    message(STATUS "CN-MSI: Clear content of '${CN_MSI_DIR}' directory")
+    file(REMOVE_RECURSE "${CN_MSI_DIR}")
+
+    configure_file(${CMAKE_CURRENT_LIST_DIR}/${CN_APP_NAME}.wxs
                    ${CN_MSI_PACKAGE_DIR}/${CN_APP_NAME}.wxs)
 
-    configure_file(${CMAKE_CURRENT_LIST_DIR}/${CN_APP_NAME}service.bat.in
-                   ${CN_MSI_PACKAGE_DIR}/${CN_APP_NAME}service.bat)
+    configure_file(${CMAKE_CURRENT_LIST_DIR}/${CN_APP_NAME}s.bat
+                   ${CN_MSI_PACKAGE_DIR}/${CN_APP_NAME}s.bat)
 
     # Copy License.rtf file (CMAKE COPY COMMAND)
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/License.rtf
@@ -68,7 +71,7 @@ if(CN_WIX_CANDLE_EXECUTABLE AND CN_WIX_LIGHT_EXECUTABLE)
             COMMAND "${CN_WIX_LIGHT_EXECUTABLE}" -ext WixUIExtension "*.wixobj" -o "${CN_MSI_PACKAGE}"
             COMMENT "Installing files and build .msi package"
             )
-    add_dependencies(${PROJECT_NAME} "${CN_APP_NAME}" "${CN_APP_NAME}-doc-en")
+    add_dependencies(${PROJECT_NAME} "${CN_APP_NAME}" "${CN_APP_NAME}-doc")
 
     #message(STATUS "MSI installer target 'msi' configured")
     #message(STATUS "Run 'cmake --build . --target msi' to build the installer")

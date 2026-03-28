@@ -169,7 +169,8 @@ The main `modbusua` object is the container for all application functionality an
 
 - **Cfg (Configuration)** — contains server‑wide configuration parameters such as console output format
 (`LogConsoleFormat`), time format for logging (`LogConsoleTimeformat`), and other global system settings.
-- **Cmd (Commands)** — contains system commands, notably `ReloadConfig` to reload the server configuration without stopping operation.
+- **Cmd (Commands)** — contains system commands, notably `ReloadConfig` to reload the server configuration
+without stopping operation.
 - **Ports** — a container for all communication ports used to connect to industrial controllers and
 other devices that support the Modbus protocol.
 
@@ -177,14 +178,19 @@ other devices that support the Modbus protocol.
 
 Each port represents a separate communication line (TCP/IP connection) and contains four main sections:
 
-- **Cfg** — port configuration parameters, including host network address (`Host`), port number (`Port`), timeouts, and other connection settings (see [Port Configuration](#sec_port_cfg)).
-- **Cmd** — port control commands, notably `StatClear` to clear port statistics (see [Port Commands](#sec_port_cmd)).
-- **Set** — current port settings, including the `Enable` parameter to enable/disable the port (see [Port Settings](#sec_port_set)).
-- **Stat** — statistical information about port operation, including counters for successful (`GoodCount`) and failed (`BadCount`) exchanges (see [Port Statistics/Diagnostics](#sec_port_stat)).
+- **Cfg** — port configuration parameters, including host network address (`Host`), port number (`Port`),
+timeouts, and other connection settings (see [Port Configuration](#sec_port_cfg)).
+- **Cmd** — port control commands, notably `StatClear` to clear port statistics
+(see [Port Commands](#sec_port_cmd)).
+- **Set** — current port settings, including the `Enable` parameter to enable/disable the port
+(see [Port Settings](#sec_port_set)).
+- **Stat** — statistical information about port operation, including counters for successful (`GoodCount`)
+and failed (`BadCount`) exchanges (see [Port Statistics/Diagnostics](#sec_port_stat)).
 
 ### Device Level (Ports/Port_N/Devices/Device_N)
 
-Each device is an individual industrial controller or PLC connected via the corresponding port. Its structure mirrors the port and includes:
+Each device is an individual industrial controller or PLC connected via the corresponding port.
+Its structure mirrors the port and includes:
 
 - **Cfg** — device configuration with parameters such as default polling period (`DefaultPeriod`),
 Modbus addresses, buffer sizes, etc. (see [Device/PLC Configuration](#sec_device_cfg)).
@@ -199,17 +205,22 @@ read cyclically according to the configuration (see [Modbus Registers](#sec_devi
 - **Messages** — contains the structure of internal Modbus messages, allowing diagnosis
 of all internal Modbus frames generated for direct read/write of Modbus data.
 
-This hierarchical structure provides a logical organization of data from the general system level down to specific process parameters, enables easy navigation of the address space, and gives OPC UA clients convenient access to all the information needed for monitoring and controlling industrial processes.
+This hierarchical structure provides a logical organization of data from the general system level down
+to specific process parameters, enables easy navigation of the address space, and
+gives OPC UA clients convenient access to all the information needed for monitoring and
+controlling industrial processes.
 
 ## Command‑Line Options {#sec_descr_gateway_cmdoption}
 
 Available command‑line options for the `modbusua` executable:
 
-| Option             | Short | Param         | Description                                   |
-|:-------------------|:------|:--------------|:----------------------------------------------|
-| `--version`        | `-v`  | `-`           | Program version                               |
-| `--help`           | `-?`  | `-`           | Help                                          |
-| `--file`           | `-f`  | `<filename>`  | Specify configuration file (default `modbusua.conf`)
+| Option            | Short     | Param         | Description                                   
+|:------------------|:----------|:--------------|:----------------------------------------------
+| `--version`       | `-v`      | `-`           | Program version                               
+| `--help`          | `-h/-?`   | `-`           | Help                                          
+| `--file`          | `-f`      | `<filename>`  | Specify configuration file (default `modbusua.conf`)
+| `--service-name`  | `-s`      | `<name>`      | Specify service name (default `modbusua`)
+| `--logdir`        |           | `<dir>`       | Specify log directory (default `log`)
 
 ## Windows Installation {#sec_descr_gateway_win}
 
@@ -217,26 +228,27 @@ Install `modbusua` using the `modbusua_<version>_<arch>.msi` installer. It creat
 installation folder (default `C:\Program Files\modbusua`), adds `modbusua` to Windows programs, and registers
 it as a Windows service.
 
-Additionally, you can use the helper `modbusuaservice.bat` to install/uninstall the Windows service.
+Additionally, you can use the helper `modbusuas.bat` to install/uninstall the Windows service.
 Run it from an Administrator command prompt with options `-i`/`-u` respectively (`-n` sets an alternative
 service name, `-?` or `--help` shows help).
 
 Example:
 ```console
-> modbusuaservice.bat -i -n My_modbusua
-> modbusuaservice.bat -u -n My_modbusua
+> modbusuas.bat -i My_modbusua
+> modbusuas.bat -u My_modbusua
 ```
 
 Installation folder layout:
 ```
 C:\Program Files\modbusua\
-+-- modbusua.exe             # I/O server executable
-+-- modbusuaservice.bat      # Service install/uninstall utility
-+-- conf\                    #
-|   +-- modbusua.conf        # Configuration file
-+-- doc\                     #
-|   +-- modbusua.chm         # Documentation
-\-- logs\                    # Folder for log files
++-- modbusua.exe      # I/O server executable
++-- modbusuas.bat     # Service install/uninstall utility
++-- conf\             #
+|   +-- modbusua.conf # Configuration file
++-- doc\              #
+|   +-- modbusua.chm  # Documentation
+|   +-- changelog.md  # List of changes
+\-- logs\             # Folder for log files
 ```
 
 ## Linux Installation {#sec_descr_gateway_linux}
@@ -270,6 +282,28 @@ WantedBy=multi-user.target
 ```
 
 Ensure all files are in place and required directories (e.g., `WorkingDirectory`) exist.
+
+### Additional script for installing/removing the `modbusuas.sh` service {#sec_descr_driver_linux_svc}
+
+Additionally, to install/remove `modbusua` from the list of systemd services, you can use
+the auxiliary utility `modbusuas.sh`, which must be run from the command line
+in administrator mode and use the command-line options `-i`/`-u` respectively
+(you can specify an alternative name for the service, `-h`, `-?`, or `--help` to display help).
+
+For example:
+```bash
+$ sudo modbusuas.sh -i MyModbusUa
+$ sudo modbusuas.sh -u MyModbusUa
+```
+
+You can specify additional parameters for the service, such as the log directory `--logdir <dir>`
+or the configuration file `--file <filename>`, which will be passed to the `modbusua` executable
+when the service starts. To do this, you must specify a special separator `--`,
+which separates the script parameters (on the left) from the program parameters (on the right), for example:
+
+```bash
+$ sudo modbusuas.sh -i modbusua2 -- -f /etc/modbusua/modbusua2.conf --logdir /tmp
+```
 
 ### Basic systemd commands (Linux) {#sec_descr_gateway_linux_cmd}
 

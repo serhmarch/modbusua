@@ -1,19 +1,29 @@
 @echo off
 setlocal enabledelayedexpansion
 
-:: ${CN_APP_NAME} Service Management Script
-:: This script manages ${CN_APP_NAME} Windows Service installation/uninstallation
+:: @CN_APP_NAME@ Service Management Script
+:: This script manages @CN_APP_NAME@ Windows Service installation/uninstallation
 
 set "SCRIPT_NAME=%~n0"
-set "CN_APP_NAME=${CN_APP_NAME}"
+set "CN_APP_NAME=@CN_APP_NAME@"
 set "DEFAULT_EXE_FILE=%CN_APP_NAME%.exe"
 set "DEFAULT_SERVICE_NAME=%CN_APP_NAME%"
-set "SERVICE_DESCRIPTION=${CN_APP_DESC}"
+set "SERVICE_DESCRIPTION=@CN_APP_DESC@"
 
 :: Initialize variables with defaults
 set "EXE_FILE=%DEFAULT_EXE_FILE%"
 set "SERVICE_NAME=%DEFAULT_SERVICE_NAME%"
-set "ACTION="
+set "ACTION=install"
+set "CN_APP_EXTRA="
+set "RAW_ARGS=%*"
+
+if "%~1"=="--help" (
+    goto :show_help
+) else if "%~1"=="-h" (
+    goto :show_help
+) else if "%~1"=="-?" (
+    goto :show_help
+) 
 
 :: Check for administrator privileges
 net session >nul 2>&1
@@ -29,24 +39,45 @@ if %errorLevel% neq 0 (
 :parse_args
 if "%~1"=="" goto :validate_args
 
-if "%~1"=="--help" (
-    goto :show_help
-) else if "%~1"=="-?" (
-    goto :show_help
-) else if "%~1"=="--install" (
+if "%~1"=="--install" (
     set "ACTION=install"
+    :: Optional service name immediately after action (short for -n NAME)
+    if not "%~2"=="" if not "%~2:~0,1%"=="-" if not "%~2"=="--" (
+        set "SERVICE_NAME=%~2"
+        shift
+        shift
+        goto :parse_args
+    )
     shift
     goto :parse_args
 ) else if "%~1"=="-i" (
     set "ACTION=install"
+    if not "%~2"=="" if not "%~2:~0,1%"=="-" if not "%~2"=="--" (
+        set "SERVICE_NAME=%~2"
+        shift
+        shift
+        goto :parse_args
+    )
     shift
     goto :parse_args
 ) else if "%~1"=="--uninstall" (
     set "ACTION=uninstall"
+    if not "%~2"=="" if not "%~2:~0,1%"=="-" if not "%~2"=="--" (
+        set "SERVICE_NAME=%~2"
+        shift
+        shift
+        goto :parse_args
+    )
     shift
     goto :parse_args
 ) else if "%~1"=="-u" (
     set "ACTION=uninstall"
+    if not "%~2"=="" if not "%~2:~0,1%"=="-" if not "%~2"=="--" (
+        set "SERVICE_NAME=%~2"
+        shift
+        shift
+        goto :parse_args
+    )
     shift
     goto :parse_args
 ) else if "%~1"=="--exe" (
@@ -85,11 +116,16 @@ if "%~1"=="--help" (
     shift
     shift
     goto :parse_args
+) else if "%~1"=="--" (
+    rem Capture all remaining args after the delimiter preserving quotes
+    set "CN_APP_EXTRA=%RAW_ARGS:*-- =%"
+    goto :validate_args
 ) else (
     echo ERROR: Unknown argument '%~1'
     echo.
     goto :show_help
 )
+
 
 :validate_args
 if "%ACTION%"=="" goto :show_help
@@ -101,44 +137,53 @@ echo.
 echo %CN_APP_NAME% Service Management Script
 echo =================================
 echo.
-echo Usage: %SCRIPT_NAME% [ACTION] [OPTIONS]
+echo Usage: %SCRIPT_NAME% [ACTION] [OPTIONS] [-- %CN_APP_NAME% OPTIONS]
 echo.
 echo Actions:
-echo   --install, -i     Install %CN_APP_NAME% as Windows service (start on demand)
-echo   --uninstall, -u   Uninstall %CN_APP_NAME% service (stop if running)
-echo   --help, -?        Show this help message
+echo   --install [NAME], -i [NAME]     Install %CN_APP_NAME% as Windows service (start on demand). NAME - optional, short for -n NAME
+echo   --uninstall [NAME], -u [NAME]   Uninstall %CN_APP_NAME% service (stop if running). NAME - optional, short for -n NAME
+echo   --help, -?                      Show this help message
 echo.
 echo Options:
 echo   --exe FILE, -e FILE       Executable filename (default: %DEFAULT_EXE_FILE%)
 echo   --name NAME, -n NAME      Service name (default: %DEFAULT_SERVICE_NAME%)
+echo.
+echo %CN_APP_NAME% options:
+echo   -- delimiter before %CN_APP_NAME% options
+echo Example:
+echo   %SCRIPT_NAME% -i %CN_APP_NAME%2 -- -f %CN_APP_NAME%2.conf --logdir "C:\Program Files\%CN_APP_NAME%\log2"
+echo To see all %CN_APP_NAME% options, run:
+echo   %CN_APP_NAME% --help
 echo.
 echo Description:
 echo   This script manages the %CN_APP_NAME% Gateway Windows service installation
 echo   and uninstallation. Administrator privileges are required.
 echo.
 echo Examples:
-echo   %SCRIPT_NAME% --install                    Install with defaults
-echo   %SCRIPT_NAME% -i -e mymodbusua.exe -n My_modbusua   Install custom service
-echo   %SCRIPT_NAME% --uninstall --name My_modbusua   Remove custom service
-echo   %SCRIPT_NAME% --help                       Show this help
+echo   %SCRIPT_NAME% --install                              Install with defaults
+echo   %SCRIPT_NAME% -i -e %DEFAULT_EXE_FILE% -n my%CN_APP_NAME%       Install custom service
+echo   %SCRIPT_NAME% -i my%CN_APP_NAME%-- -f conf\my%CN_APP_NAME%.conf Install custom service with app options
+echo   %SCRIPT_NAME% --uninstall --name my%CN_APP_NAME%           Remove custom service
+echo   %SCRIPT_NAME% -u my%CN_APP_NAME%                           Remove custom service (short form)
+echo   %SCRIPT_NAME% --help                                 Show this help
 echo.
 echo Default Configuration:
-echo   Executable: %DEFAULT_EXE_FILE%
+echo   Executable  : %DEFAULT_EXE_FILE%
 echo   Service Name: %DEFAULT_SERVICE_NAME%
-echo   Display Name: %SERVICE_NAME%
+echo   Display Name: %SERVICE_DESCRIPTION%
 echo.
 goto :end
 
 :install_service
-echo Installing ${CN_APP_NAME} service...
+echo Installing %CN_APP_NAME% service...
 echo Configuration:
 echo   Executable: %EXE_FILE%
 echo   Service Name: %SERVICE_NAME%
 echo   Display Name: %SERVICE_NAME%
 echo.
 
-:: Check if executable exists
-if not exist "%EXE_FILE%" (
+:: Check if executable exists next to this script (handles spaces)
+if not exist "%SCRIPT_DIR%%EXE_FILE%" (
     echo ERROR: Executable '%EXE_FILE%' not found in current directory!
     echo Please ensure the executable file is present before installing the service.
     echo Current directory: %CD%
@@ -146,8 +191,8 @@ if not exist "%EXE_FILE%" (
     goto :error_end
 )
 
-:: Get full path to executable
-for %%F in ("%EXE_FILE%") do set "EXE_FULL_PATH=%%~fF"
+:: Get full path to executable using script directory
+for %%F in ("%SCRIPT_DIR%%EXE_FILE%") do set "EXE_FULL_PATH=%%~fF"
 
 :: Check if service already exists
 sc query "%SERVICE_NAME%" >nul 2>&1
@@ -158,10 +203,16 @@ if %errorLevel% equ 0 (
     goto :error_end
 )
 
+:: Build application parameters (default: -s <service-name>) and append extras if provided
+set "CN_APP_PARAMS=-s %SERVICE_NAME%"
+if defined CN_APP_EXTRA set "CN_APP_PARAMS=%CN_APP_PARAMS% %CN_APP_EXTRA%"
+:: Escape embedded quotes for inclusion inside overall quoted binPath value
+set "CN_APP_PARAMS_ESC=%CN_APP_PARAMS:"=\"%"
+
 :: Install the service
 echo Creating service '%SERVICE_NAME%'...
 sc create "%SERVICE_NAME%" ^
-    binPath= "\"%EXE_FULL_PATH%\"" ^
+    binPath= "\"%EXE_FULL_PATH%\" %CN_APP_PARAMS_ESC%" ^
     DisplayName= "%SERVICE_NAME%" ^
     start= demand ^
     type= own
@@ -195,7 +246,7 @@ echo.
 goto :end
 
 :uninstall_service
-echo Uninstalling ${CN_APP_NAME} service...
+echo Uninstalling %CN_APP_NAME% service...
 echo Service Name: %SERVICE_NAME%
 echo.
 

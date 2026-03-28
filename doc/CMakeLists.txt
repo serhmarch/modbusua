@@ -56,7 +56,7 @@ if(CN_DOXYGEN_EXECUTABLE)
             )
     add_dependencies(${CN_DOC_TARGET_UA} ${CN_APP_NAME})
 
-    SET (CN_DOC_TARGET_EN "${CN_APP_NAME}-doc-en")    
+    SET (CN_DOC_TARGET_EN "${CN_APP_NAME}-doc")    
     add_custom_target(${CN_DOC_TARGET_EN} ALL
             WORKING_DIRECTORY "${CN_DOC_DIR}"
             COMMAND "${CN_DOXYGEN_EXECUTABLE}" "${CN_DOC_FILE_EN}"

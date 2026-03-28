@@ -266,23 +266,38 @@ if (WIN32)
 	message(STATUS "CN: Generate install-data for Windows")
 
 	file(GLOB CN_WIN_CONF_FILES "${CMAKE_SOURCE_DIR}/install/${CN_APP_CONF}")
-	file(GLOB CN_WIN_HELP_FILES "${CMAKE_BINARY_DIR}/doc/output-en/${CN_APP_NAME}.chm")
+	file(GLOB CN_WIN_HELP_FILES "${CMAKE_BINARY_DIR}/doc/output/${CN_APP_NAME}.chm")
+    file(GLOB CN_WIN_CHANGELOG_FILE "${CMAKE_SOURCE_DIR}/changelog.md")
 
-	install(TARGETS ${CN_APP_NAME}       DESTINATION ".")
-	install(FILES   ${CN_WIN_CONF_FILES} DESTINATION "./conf")
-	install(FILES   ${CN_WIN_HELP_FILES} DESTINATION "./doc")
-	install(DIRECTORY 					 DESTINATION "./log")
+    install(TARGETS ${CN_APP_NAME}           DESTINATION ".")
+	install(FILES   ${CN_WIN_CONF_FILES}     DESTINATION "./conf")
+	install(FILES   ${CN_WIN_HELP_FILES}     DESTINATION "./doc")
+    install(FILES   ${CN_WIN_CHANGELOG_FILE} DESTINATION "./doc")
+	install(DIRECTORY 					     DESTINATION "./log")
 else()
 	# Example of starting install process:
-	# `$ sudo cmake --install ~/tmp/cmake/modbusua/Linux/Debug --prefix /`
+	# `$ sudo cmake --install ~/tmp/cmake/chainua/Linux/Debug --prefix /`
 	message(STATUS "CN: Generate install-data for Linux")
 
-	file(GLOB CN_LINUX_CONF_FILES "${CMAKE_SOURCE_DIR}/install/${CN_APP_CONF}")
+    set(CN_LINUX_IN_SERVICE_SCRIPT  "${CMAKE_SOURCE_DIR}/install/linux/${CN_APP_NAME}s.sh")
+    set(CN_LINUX_OUT_SERVICE_SCRIPT "${CMAKE_BINARY_DIR}/${CN_APP_NAME}s.sh")
+
+    message(STATUS "CN: Input service script: '${CN_LINUX_IN_SERVICE_SCRIPT}'")
+    message(STATUS "CN: Output service script: '${CN_LINUX_OUT_SERVICE_SCRIPT}'")
+
+    configure_file(${CN_LINUX_IN_SERVICE_SCRIPT}
+                   ${CN_LINUX_OUT_SERVICE_SCRIPT}
+                   @ONLY
+                   FILE_PERMISSIONS OWNER_READ OWNER_EXECUTE
+                                    GROUP_READ GROUP_EXECUTE
+                                    WORLD_READ WORLD_EXECUTE)
+
+    file(GLOB CN_LINUX_CONF_FILES "${CMAKE_SOURCE_DIR}/install/${CN_APP_CONF}")
 	file(GLOB CN_LINUX_SERV_FILES "${CMAKE_SOURCE_DIR}/install/linux/${CN_APP_NAME}.service")
 
-	install(TARGETS ${CN_APP_NAME}         DESTINATION "./usr/bin")
-	install(FILES   ${CN_LINUX_CONF_FILES} DESTINATION "./etc/${CN_APP_NAME}")
-	install(FILES   ${CN_LINUX_SERV_FILES} DESTINATION "./etc/systemd/system")
-	install(DIRECTORY 					   DESTINATION "./var/lib/${CN_APP_NAME}")
-	install(DIRECTORY 					   DESTINATION "./var/log/${CN_APP_NAME}")
+	install(TARGETS   ${CN_APP_NAME}                 DESTINATION "./usr/bin")
+	install(PROGRAMS  ${CN_LINUX_OUT_SERVICE_SCRIPT} DESTINATION "./usr/bin")
+	install(FILES     ${CN_LINUX_CONF_FILES}         DESTINATION "./etc/${CN_APP_NAME}")
+	install(DIRECTORY 					             DESTINATION "./var/lib/${CN_APP_NAME}")
+	install(DIRECTORY 					             DESTINATION "./var/log/${CN_APP_NAME}")
 endif()

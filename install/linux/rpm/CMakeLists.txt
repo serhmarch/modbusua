@@ -11,7 +11,7 @@ set(CN_RPM_SPEC_PATH "${CN_RPM_SPEC_DIR}/${CN_RPM_SPEC_FILE}")
 
 message(STATUS "CN-RPM: Configure file '${CN_RPM_SPEC_PATH}' for project '${PROJECT_NAME}'")
 
-configure_file(${CMAKE_CURRENT_LIST_DIR}/${CN_RPM_SPEC_FILE}.in
+configure_file(${CMAKE_CURRENT_LIST_DIR}/${CN_RPM_SPEC_FILE}
 			   ${CN_RPM_SPEC_PATH}
 			   FILE_PERMISSIONS OWNER_READ OWNER_WRITE 
                      			GROUP_READ

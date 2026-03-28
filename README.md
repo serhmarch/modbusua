@@ -98,10 +98,10 @@ Build directory is where `cmake_install.cmake` is located.
 
 ```cmd
 :: Install as a service (requires Administrator)
-modbusuaservice.bat -i -n modbusuaService
+modbusuas.bat -i modbusuaService
 
 :: Uninstall the service
-modbusuaservice.bat -u -n modbusuaService
+modbusuas.bat -u -modbusuaService
 ```
 
 #### MSI Installer
