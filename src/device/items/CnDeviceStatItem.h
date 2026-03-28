@@ -17,7 +17,7 @@
 
     \details Combines all common properties inherent to all statistics/diagnostics variables,
     for example all statistics/diagnostics variables are available for read-only access, i.e.
-    the `AccessRights()` method returns the OPC_READABLE flag.
+    the `access()` method returns the Cn::Access_Read flag.
  */
 
 class CnDeviceStatItem : public CnDeviceBaseItem
@@ -71,6 +71,7 @@ template <class RT> inline RT getDeviceStatMethodRT(RT(CnDeviceStat::*)()const) 
 
 #define DEVICE_STAT_ITEM_TYPE(name) typedef CnDeviceStatItemBase<decltype(getDeviceStatMethodRT(&CnDeviceStat::Stat##name)), &CnDeviceStat::Stat##name>
 
+DEVICE_STAT_ITEM_TYPE(SinceTimestamp                    ) CnDeviceStatItemSinceTimestamp                    ; //!< Statistics. Statistics. Timestamp since statistics is collected (after init or clear)
 DEVICE_STAT_ITEM_TYPE(State                             ) CnDeviceStatItemState                             ; //!< Statistics. Bit array of current gateway state
 DEVICE_STAT_ITEM_TYPE(StateEnableDevice                 ) CnDeviceStatItemStateEnableDevice                 ; //!< Statistics. Communication allowed (corresponds to bit 0 of Stat.State)
 DEVICE_STAT_ITEM_TYPE(StateConnectionAlive              ) CnDeviceStatItemStateConnectionAlive              ; //!< Statistics. Connection to PLC exists (corresponds to bit 2 of Stat.State)

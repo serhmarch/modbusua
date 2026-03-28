@@ -131,13 +131,13 @@ Cn::StatusCode CnDeviceRunnable::runPrivate()
         case STATE_RESTORE_TIMEOUT_BEGIN:
             m_timerRestoreBegin = Cn::GetTimer();
             m_state = STATE_RESTORE_TIMEOUT;
-            m_device->setIncluded(false);
+            m_device->setIncluded(false); // Note: temporarily exclude device from execution sequence
             // Note: Check 'RestoreTimeout' in next cycle. At least one cycle to restore is needed
             break;
         case STATE_RESTORE_TIMEOUT:
             if ((Cn::GetTimer() - m_timerRestoreBegin) >= static_cast<Cn::Timer_t>(m_config.RestoreTimeout))
             {
-                m_device->setIncluded(true);
+                m_device->setIncluded(true); // Note: include device to execution sequence and begin to process it
                 m_state = STATE_MAIN;
                 fRepeat = true;
                 break;

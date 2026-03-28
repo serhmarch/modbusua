@@ -11,6 +11,7 @@ CnDeviceStat::CnDeviceStat()
 void CnDeviceStat::clear()
 {
     CnCriticalSectionLocker _(&cs);
+    SinceTimestamp = CnTimestamp::current();
     // Request status
     Common = RequestStatus();
     Poke = RequestStatus();

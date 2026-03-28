@@ -85,6 +85,15 @@ void CnPort::setCfgPort(const CnCfgPortPtr &cfg)
         Cn::postEvent(this, new EventSetCfgPort(cfg));
 }
 
+void CnPort::setSettingEnable(bool v)
+{
+    m_set.cs.lock();
+    m_set.Enable = v;
+    m_set.cs.unlock();
+    bool enable = this->isEnable();
+    m_stat->setStatStateEnablePort(enable);
+}
+
 void CnPort::CmdStatClear()
 {
     m_stat->clear();
@@ -125,6 +134,9 @@ void CnPort::removeDevice(CnDevice* device)
 void CnPort::setConfigInner(const Cn::Config &config)
 { 
     m_cfg->setConfig(config);
+    bool enable = this->isEnable();
+    m_stat->setStatStateEnablePort(enable);
+
     m_logger->setName(m_cfg->CfgName());
 
     m_vars.cs.lock();

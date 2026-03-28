@@ -17,7 +17,7 @@
 
      \details Combines common properties inherent to all configuration
      variables, for example configuration variables are read-only, i.e.
-     the `AccessRights()` method returns the flag OPC_READABLE.
+     the `access()` method returns the flag Cn::Access_Read.
  */
 
 class CnPortCfgItem : public CnPortBaseItem

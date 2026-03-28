@@ -15,7 +15,7 @@
 
     \details Combines common properties inherent to all commands,
     for example, all command variables are writable (in addition to readable), i.e.
-    the `AccessRights()` method returns the combination of flags OPC_READABLE | OPC_WRITEABLE.
+    the `access()` method returns the combination of flags Cn::Access_Read | OPC_WRITEABLE.
 */
 
 class CnDeviceCmdItem : public CnDeviceBaseItem

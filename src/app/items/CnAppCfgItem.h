@@ -17,7 +17,7 @@
 
      \details Combines common properties inherent to all configuration variables;
      for example, all configuration variables are read-only, i.e.,
-     the `AccessRights()` method returns the OPC_READABLE flag.
+     the `access()` method returns the Cn::Access_Read flag.
  */
 
 class CnAppCfgItem : public CnAppBaseItem

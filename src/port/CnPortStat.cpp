@@ -2,12 +2,14 @@
 
 CnPortStat::CnPortStat()
 {
+    StateEnablePort = false;
     clear();
 }
 
 void CnPortStat::clear()
 {
     CnCriticalSectionLocker _(&cs);
+    SinceTimestamp = CnTimestamp::current();
     ThreadCycleCount = 0;
     ThreadCycleSum   = 0;
     ThreadLastCycle  = 0;
@@ -21,6 +23,14 @@ void CnPortStat::clear()
     LastSuccessTimestamp = 0;
     LastErrorStatus = Modbus::Status_Good;
     LastErrorTimestamp = 0;
+}
+
+uint32_t CnPortStat::StatState() const
+{
+    CnCriticalSectionLocker _(&cs);
+    uint32_t v = 0;
+    v |= StateEnablePort * StateFlag_EnablePort;
+    return v;
 }
 
 void CnPortStat::setStatCycleTime(uint32_t time)

@@ -16,8 +16,8 @@
     \details Settings are intended to change server (driver) parameters
     at runtime, unlike configuration values, including programmatically.
     Combines common properties inherent to all settings: settings
-    variables are writable (and readable), i.e. `AccessRights()` returns
-    the combination OPC_READABLE | OPC_WRITEABLE.
+    variables are writable (and readable), i.e. `access()` returns
+    the combination Cn::Access_Read | OPC_WRITEABLE.
  */
 
 class CnPortSetItem : public CnPortBaseItem

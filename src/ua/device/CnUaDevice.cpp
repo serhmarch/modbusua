@@ -353,6 +353,7 @@ void CnUaDevice::innerInitUaStat()
 
 #define INIT_STAT(name)    item = new CnDeviceStatItem##name(this); item->setName(CnSTR(#name)); addItemExtInner(item);
 
+INIT_STAT(SinceTimestamp            )
 INIT_STAT(State                     )
 INIT_STAT(StateEnableDevice         )
 INIT_STAT(StateConnectionAlive      )

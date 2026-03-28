@@ -139,7 +139,7 @@ public: // Settings
     inline bool SettingEnable() const { CnCriticalSectionLocker _(&m_set.cs); return m_set.Enable; }
 
     /// \details Sets the setting 'Availability of this port for runtime execution sequence (1-on, 0-off)'.
-    inline void setSettingEnable(bool v) { CnCriticalSectionLocker _(&m_set.cs); m_set.Enable = v; }
+    void setSettingEnable(bool v);
 
 public: // Commands
     /// \details Executes command 'Clear statistical information'.

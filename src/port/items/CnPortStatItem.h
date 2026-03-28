@@ -15,8 +15,8 @@
  /*! \brief Base class for statistics/diagnostics `item reference` for a port.
 
      \details Combines common properties inherent to all stats/diagnostics
-     variables; for example, they are read-only, i.e. `AccessRights()`
-     returns the flag OPC_READABLE.
+     variables; for example, they are read-only, i.e. `access()`
+     returns the flag Cn::Access_Read.
  */
 
 class CnPortStatItem : public CnPortBaseItem
@@ -71,6 +71,9 @@ template <class RT> inline RT getPortStatMethodRT(RT(CnPortStat::*)()const) { re
 
 #define PORT_STAT_ITEM_TYPE(name) typedef CnPortStatItemBase<decltype(getPortStatMethodRT(&CnPortStat::Stat##name)), &CnPortStat::Stat##name>
 
+PORT_STAT_ITEM_TYPE(SinceTimestamp      ) CnPortStatItemSinceTimestamp      ; //!< Statistics. Timestamp since statistics is collected (after init or clear)
+PORT_STAT_ITEM_TYPE(State               ) CnPortStatItemState               ; //!< Statistics. Bitmask of the current port state
+PORT_STAT_ITEM_TYPE(StateEnablePort     ) CnPortStatItemStateEnablePort     ; //!< Statistics. Communication allowed (bit 0 of Stat.State)
 PORT_STAT_ITEM_TYPE(ThreadCycleCount    ) CnPortStatItemThreadCycleCount    ; //!< Statistics. Thread execution: number of cycles since statistics started
 PORT_STAT_ITEM_TYPE(ThreadLastCycle     ) CnPortStatItemThreadLastCycle     ; //!< Statistics. Thread execution: duration of last cycle (microseconds)
 PORT_STAT_ITEM_TYPE(ThreadMinCycle      ) CnPortStatItemThreadMinCycle      ; //!< Statistics. Thread execution: minimum cycle time since start (microseconds)

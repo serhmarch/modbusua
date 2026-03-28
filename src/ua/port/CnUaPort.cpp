@@ -293,6 +293,9 @@ void CnUaPort::innerInitUaStat()
 
 #define INIT_STAT(name)    item = new CnPortStatItem##name(this); item->setName(CnSTR(#name)); addItem(item);
 
+INIT_STAT(SinceTimestamp      )
+INIT_STAT(State               )
+INIT_STAT(StateEnablePort     )
 INIT_STAT(ThreadCycleCount    )
 INIT_STAT(ThreadLastCycle     )
 INIT_STAT(ThreadMinCycle      )

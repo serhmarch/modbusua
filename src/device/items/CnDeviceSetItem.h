@@ -18,7 +18,7 @@
     unlike server configuration values, including programmatically.\n
     Combines common properties inherent to all settings,
     for example, all setting variables are writable (in addition to readable), i.e.
-    the `AccessRights()` method returns the combination of flags OPC_READABLE | OPC_WRITEABLE.
+    the `access()` method returns the combination of flags Cn::Access_Read | OPC_WRITEABLE.
 */
 
 class CnDeviceSetItem : public CnDeviceBaseItem

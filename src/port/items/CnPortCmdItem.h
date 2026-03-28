@@ -15,7 +15,7 @@
 
     \details Combines common properties inherent to all commands,
     for example command variables are writable (and readable), i.e.
-    the `AccessRights()` method returns OPC_READABLE | OPC_WRITEABLE.
+    the `access()` method returns Cn::Access_Read | OPC_WRITEABLE.
 */
 
 class CnPortCmdItem : public CnPortBaseItem

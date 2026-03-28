@@ -24,6 +24,9 @@ public:
 
 public: // Statistics getters
 
+    // Since timestamp
+    inline CnTimestamp StatSinceTimestamp() const { CnCriticalSectionLocker _(&cs); return SinceTimestamp; } ///< \details Statistics. Timestamp since statistics is collected (after init or clear)
+
     // State Statistics                                              
            uint32_t StatState               () const;                                 ///< \details Statistics. Bitmask of the current gateway state
     inline bool     StatStateEnableDevice   () const { return StateEnableDevice   ; } ///< \details Statistics. Communication allowed (bit 0 of Stat.State)
@@ -112,6 +115,8 @@ private:
         CnString LastErrorText;
     };
 
+    // Since timestamp
+    CnTimestamp SinceTimestamp;
     // State
     bool StateEnableDevice   ;
     bool StateConnectionAlive;
