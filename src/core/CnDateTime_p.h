@@ -43,8 +43,8 @@ public:
     inline void decRef() { if (--ref < 1) delete this; }
 
 public:
-    bool isUtc() const { return (flags & ~Flag_Local); }
-    bool isLocal() const { return (flags & Flag_Local); }
+    inline bool isUtc() const { return !isLocal(); }
+    inline bool isLocal() const { return (flags & Flag_Local); }
 
 public:
     CnRefCount_t ref;

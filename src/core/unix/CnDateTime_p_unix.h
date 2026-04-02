@@ -22,6 +22,7 @@ public:
 
     ~CnDateTimePrivateUnix() override
     {
+        auto dummy = 0;
     }
 
 

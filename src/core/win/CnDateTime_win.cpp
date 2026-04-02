@@ -57,17 +57,22 @@ CnDateTime::CnDateTime(const CnTimestamp &timestamp, bool local)
 {
     CnDateTimePrivateWin *dd = new CnDateTimePrivateWin();
     Cn::ftconv c;
+    c.data = timestamp.rawValue(); // UTC timestamp raw value
+    bool ok;
     if (local)
     {
+        SYSTEMTIME utcDt;
+        ok = FileTimeToSystemTime(&c.ft, &utcDt) != 0; // Convert to SYSTEMTIME in UTC
+        if (ok)
+            ok = SystemTimeToTzSpecificLocalTime(NULL, &utcDt, &dd->dt) != 0;
         dd->flags = CnDateTimePrivate::Flag_Local;
-        c.data = timestamp.toLocalRawValue();
     }
     else
     {
+        ok = FileTimeToSystemTime(&c.ft, &dd->dt) != 0;
         dd->flags = 0;
-        c.data = timestamp.toUtcRawValue();
     }
-    if (!FileTimeToSystemTime(&c.ft, &dd->dt))
+    if (!ok)
         dd->clear();
     d = dd;
 }

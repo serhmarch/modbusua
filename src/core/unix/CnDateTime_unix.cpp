@@ -42,6 +42,7 @@ CnDateTime::CnDateTime(uint16_t year, uint16_t month, uint16_t day, uint16_t hou
 {
     CnDateTimePrivateUnix *dd = new CnDateTimePrivateUnix();
     dd->flags = local ? CnDateTimePrivate::Flag_Local : 0;
+    dd->dt.tm_isdst = -1; // Let the system determine whether daylight saving time is in effect
     dd->dt.tm_year = year - 1900;
     dd->dt.tm_mon = month - 1;
     dd->dt.tm_mday = day;
