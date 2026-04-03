@@ -6,6 +6,16 @@
 
 #include <app/CnAppConfig.h>
 
+static const char CN_APP_AS_SERVICE[] = CN_APP_NAME_UPPER "_AS_SERVICE";
+
+static bool isService()
+{
+    if (std::getenv(CN_APP_AS_SERVICE) != nullptr)
+        return true;
+    auto app_ppid = getppid();
+    return app_ppid == 0 || app_ppid == 1;
+}
+
 CnString CnApp::applicationFilePath()
 {
     char path[PATH_MAX];
@@ -91,7 +101,33 @@ Cn::StatusCode CnApp::serviceStart()
 
     // Determine if prog was started by systemd
     // When starting service, systemd set INVOCATION_ID env variable
-    if (std::getenv("INVOCATION_ID") == nullptr)
+    if (isService())
+    {
+        createLoggerService();
+        // int daemon(int nochdir, int noclose):
+        // If `nochdir` is zero, daemon() changes the process's current working
+        // directory to the root directory ("/"); otherwise, the current
+        // working directory is left unchanged.
+        // If `noclose` is zero, daemon() redirects standard input, standard
+        // output, and standard error to /dev/null; otherwise, no changes are
+        // made to these file descriptors.
+        if (daemon(1, 0)) // Detach from terminal, on error return -1
+        {
+            CN_LOG_Error(CnSTR("Daemon mode for '%s' failed. Error: %s"), serviceName.data(), Cn::getLastErrorText().data());
+            return Cn::Status_Bad;
+        }
+
+        auto r = std::signal(SIGHUP, CnApp::signal_reload);
+        if (r == SIG_ERR)
+            CN_LOG_Warning(CnSTR("Can't set signal handler for SIGHUP. Error: %s"), Cn::getLastErrorText().data());
+
+        CN_LOG_Info(CnSTR("Start '%s' as service '%s'"), m_name.data(), serviceName.data());
+        int res = this->run();
+        if (res)
+            return Cn::Status_Bad;
+        return Cn::Status_Good;
+    }
+    else
     {
         // Console-log is disabled for service
         // Create it only for non-service (console) mode
@@ -103,29 +139,6 @@ Cn::StatusCode CnApp::serviceStart()
         return Cn::Status_BadNoService;
     }
 
-    createLoggerService();
-    // int daemon(int nochdir, int noclose):
-    // If `nochdir` is zero, daemon() changes the process's current working
-    // directory to the root directory ("/"); otherwise, the current
-    // working directory is left unchanged.
-    // If `noclose` is zero, daemon() redirects standard input, standard
-    // output, and standard error to /dev/null; otherwise, no changes are
-    // made to these file descriptors.
-    if (daemon(1, 0)) // Detach from terminal, on error return -1
-    {
-        CN_LOG_Error(CnSTR("Daemon mode for '%s' failed. Error: %s"), serviceName.data(), Cn::getLastErrorText().data());
-        return Cn::Status_Bad;
-    }
-
-    auto r = std::signal(SIGHUP, CnApp::signal_reload);
-    if (r == SIG_ERR)
-        CN_LOG_Warning(CnSTR("Can't set signal handler for SIGHUP. Error: %s"), Cn::getLastErrorText().data());
-
-    CN_LOG_Info(CnSTR("Start '%s' as service '%s'"), m_name.data(), serviceName.data());
-    int res = this->run();
-    if (res)
-        return Cn::Status_Bad;
-    return Cn::Status_Good;
 }
 
 void CnApp::initSpec()

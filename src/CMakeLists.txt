@@ -266,7 +266,7 @@ if (WIN32)
 	message(STATUS "CN: Generate install-data for Windows")
 
 	file(GLOB CN_WIN_CONF_FILES "${CMAKE_SOURCE_DIR}/install/${CN_APP_CONF}")
-	file(GLOB CN_WIN_HELP_FILES "${CMAKE_BINARY_DIR}/doc/output/${CN_APP_NAME}.chm")
+	file(GLOB CN_WIN_HELP_FILES "${CMAKE_BINARY_DIR}/doc/output-en/${CN_APP_NAME}.chm")
     file(GLOB CN_WIN_CHANGELOG_FILE "${CMAKE_SOURCE_DIR}/changelog.md")
 
     install(TARGETS ${CN_APP_NAME}           DESTINATION ".")

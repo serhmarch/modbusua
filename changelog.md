@@ -7,5 +7,6 @@
   as well as set command-line parameters for the service (see `modbusuas.bat --help`)
 * Added statistics for the port object: `Stat.State` and `Stat.StateEnablePort` (see documentation)
 * Added the `SinceTimestamp` statistic (the time when statistics began) for Port/Device
+* Fixed service mode definition for Unix
 * Added the `changelog.md` file to the installer's `doc` folder                                                   
 * Updated documentation

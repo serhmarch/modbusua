@@ -46,9 +46,9 @@
             "architecture": "win32",
             "binaryDir": "$env{USERPROFILE}/tmp/cmake/modbusua/bin/Win32",
             "cacheVariables": {
-                "CMAKE_PREFIX_PATH": "C:/Qt/5.15.2/msvc2019",
                 "CMAKE_C_COMPILER": "cl.exe",
-                "CMAKE_CXX_COMPILER": "cl.exe"
+                "CMAKE_CXX_COMPILER": "cl.exe",
+                "CMAKE_CXX_FLAGS": "/MP"
             }
         },
         {

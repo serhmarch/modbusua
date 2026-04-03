@@ -17,6 +17,8 @@ set(CN_APP_CONF "${CN_APP_NAME}.conf" CACHE INTERNAL "Name of the configuration 
 set(CN_APP_VERSION ${PROJECT_VERSION} CACHE INTERNAL "Version of the application")
 set(CN_APP_VENDOR "serhmarch" CACHE INTERNAL "Vendor of the application")
 
+string(TOUPPER "${CN_APP_NAME}" CN_APP_NAME_UPPER)
+set(CN_APP_NAME_UPPER "${CN_APP_NAME_UPPER}" CACHE INTERNAL "Uppercase name of the application")
 
 option(CN_TESTS_ENABLED "Enable unit tests" OFF)
 
