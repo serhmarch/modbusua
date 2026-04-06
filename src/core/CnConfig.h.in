@@ -23,6 +23,11 @@
 #define CN_APP_NAME "@CN_APP_NAME@"
 
 /*
+   Uppercase name of the application
+*/
+#define CN_APP_NAME_UPPER "@CN_APP_NAME_UPPER@"
+
+/*
    Description of the application
 */
 #define CN_APP_DESC "@CN_APP_DESC@"

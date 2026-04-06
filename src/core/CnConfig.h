@@ -23,6 +23,11 @@
 #define CN_APP_NAME "modbusua"
 
 /*
+   Uppercase name of the application
+*/
+#define CN_APP_NAME_UPPER "MODBUSUA"
+
+/*
    Description of the application
 */
 #define CN_APP_DESC "OPC UA - Modbus Gateway"

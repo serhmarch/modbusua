@@ -28,6 +28,10 @@
 #define CN_SEC_IN_HOUR                 3600
 #define CN_SEC_IN_DAY                  86400
 
+#define CN_MINUTE_IN_HOUR              60
+#define CN_MINUTE_IN_DAY               1440
+#define CN_HOUR_IN_DAY                 24
+
 #define CN_MILLISEC_IN_SEC             1000
 #define CN_MILLISEC_IN_MINUTE          60000
 #define CN_MILLISEC_IN_HOUR            3600000

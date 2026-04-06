@@ -15,6 +15,11 @@
             "inherits": "Config-Base",
             "hidden": true,
             "binaryDir": "$env{USERPROFILE}/tmp/cmake/modbusua/bin",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_CXX_COMPILER": "cl.exe",
+                "CMAKE_CXX_FLAGS": "/MP"
+            },
             "condition": {
                 "type": "equals",
                 "lhs": "${hostSystemName}",
@@ -29,12 +34,7 @@
             "generator": "Visual Studio 18 2026",
             "toolset": "host=x64",
             "architecture": "x64",
-            "binaryDir": "$env{USERPROFILE}/tmp/cmake/modbusua/bin/Win64",
-            "cacheVariables": {
-                "CMAKE_PREFIX_PATH": "C:/Qt/5.15.2/msvc2019_64",
-                "CMAKE_C_COMPILER": "cl.exe",
-                "CMAKE_CXX_COMPILER": "cl.exe"
-            }
+            "binaryDir": "$env{USERPROFILE}/tmp/cmake/modbusua/bin/Win64"
         },
         {
             "name": "Win32-MSVC",
@@ -44,12 +44,7 @@
             "generator": "Visual Studio 18 2026",
             "toolset": "host=x64",
             "architecture": "win32",
-            "binaryDir": "$env{USERPROFILE}/tmp/cmake/modbusua/bin/Win32",
-            "cacheVariables": {
-                "CMAKE_C_COMPILER": "cl.exe",
-                "CMAKE_CXX_COMPILER": "cl.exe",
-                "CMAKE_CXX_FLAGS": "/MP"
-            }
+            "binaryDir": "$env{USERPROFILE}/tmp/cmake/modbusua/bin/Win32"
         },
         {
             "name": "Win64-MSVC-Tests",
