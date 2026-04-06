@@ -5,7 +5,6 @@
 set -e
 
 if [ "$1" = "remove" ] || [ "$1" = "purge" ]; then
-	# Stop and disable the modbusua service before removing
-	systemctl stop @CN_APP_NAME@
-	systemctl disable @CN_APP_NAME@
+    # Run uninstall service script before uninstallation
+    @CN_APP_NAME@s.sh --uninstall
 fi

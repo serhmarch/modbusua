@@ -4,8 +4,7 @@
 # if any command returns a non-zero (error) status
 set -e
 
-#if [ "$1" = "configure" ]; then
-#	# Enable and start the modbusua service after installation
-#    systemctl enable @CN_APP_NAME@
-#    systemctl start @CN_APP_NAME@
-#fi
+if [ "$1" = "configure" ]; then
+    # Run install service script after installation
+    @CN_APP_NAME@s.sh --install
+fi

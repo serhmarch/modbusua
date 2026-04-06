@@ -1,2 +1,1 @@
 /etc/@CN_APP_NAME@/@CN_APP_CONF@
-/etc/systemd/system/@CN_APP_NAME@.service
