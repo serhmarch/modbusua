@@ -308,6 +308,10 @@ void CnDeviceRunnable::synchConfig(const Cn::Config &config)
     { auto v = CnDeviceConfig::getInnerRestoreTimeoutMillisec            (config, &ok); if (ok) m_config.RestoreTimeout            = v; }
     { auto v = CnDeviceConfig::getInnerMaxReadHoldingRegisters           (config, &ok); if (ok) m_config.MaxReadHoldingRegisters   = v; }
     { auto v = CnDeviceConfig::getInnerMaxWriteMultipleRegisters         (config, &ok); if (ok) m_config.MaxWriteMultipleRegisters = v; }
+
+    { auto v = CnDeviceConfig::getInnerModbusUnit (config, &ok); if (ok) m_plc->setUnit       (v); }
+    { auto v = CnDeviceConfig::getInnerRepeatCount(config, &ok); if (ok) m_plc->setRepeatCount(v); }
+    
     //m_logger->logTrace(CnSTR("SET CONFIG: INIT_TIMEOUT = %u"), m_config.InitTimeout);
 }
 
