@@ -62,7 +62,7 @@ Address Space Example:
 
 #### Windows Build
 
-```cmd
+```bat
 git clone --recursive https://github.com/serhmarch/modbusua.git
 cd modbusua
 mkdir build && cd build
@@ -86,7 +86,7 @@ cmake --build . --config Release
 
 Next `cmake --install` commands are identical:
 
-```cmd
+```bat
 cd <build_directory> 
 cmake --install .
 cmake --install . --prefix "C:\Program Files\modbusua"
@@ -96,7 +96,7 @@ Build directory is where `cmake_install.cmake` is located.
 
 #### As a Windows Service
 
-```cmd
+```bat
 :: Install as a service (requires Administrator)
 modbusuas.bat -i modbusuaService
 
@@ -107,7 +107,7 @@ modbusuas.bat -u -modbusuaService
 #### MSI Installer
 
 Build an MSI installer using the WiX Toolset:
-```cmd
+```bat
 cd install/windows
 cmake --build . --target modbusua-msi
 ```
@@ -118,7 +118,7 @@ cmake --build . --target modbusua-msi
 
 Next `cmake --install` commands are identical:
 
-```cmd
+```bash
 cd <build_directory> 
 cmake --install .
 cmake --install . --prefix /
@@ -127,6 +127,14 @@ cmake --install . --prefix /
 Build directory is where `cmake_install.cmake` is located.
 
 #### systemd Service
+
+```bash
+# Install as a service (requires Administrator)
+modbusuas.sh -i mymodbusua
+
+# Uninstall the service
+modbusuas.sh -u -mymodbusua
+```
 
 Next example shows how to install and enable the `modbusua` service manually:
 ```bash
@@ -209,25 +217,53 @@ Timeout=5000
 ```ini
 [Device]
 Port=Port1
-Unit=1
+ModbusUnit=1
 ```
 
 ### Logging Settings
 
 ```ini
-[Log]
-Log.flags=Error|Warning|Info
-Log.file.path=modbusua.log
-Log.file.maxsize=10MB
+[SYSTEM]
+Log.flags="Error|Warning|Info|TraceDetails"
+Log.output="system file console"
+Log.default.format="[%time] %cat %src. %text"
+Log.default.timeformat="%Y-%M-%D %h:%m:%s.%f"
+Log.concole.format="[%time] %src. %text"
+Log.console.timeformat="%h:%m:%s.%f"
+Log.file.format="%time;%cat;%src;%text"
+Log.file.timeformat="%h:%m:%s.%f"
+Log.file.path="log.csv"
+Log.file.maxcount=10
+Log.file.maxsize=1MB
+
+[PORT]
+Log.flags="Error|Warning|Info|TraceDetails"
+Log.output="file"
+Log.file.format="%time;%cat;%src;%text"
+Log.file.timeformat="%h:%m:%s.%f"
+Log.file.path="logport.csv"
+Log.file.maxcount=10
+Log.file.maxsize=1MB
+
+[DEVICE]
+Log.flags="Error|Warning|Info|TraceDetails"
+Log.output="file"
+Log.file.format="%time;%cat;%src;%text"
+Log.file.timeformat="%h:%m:%s.%f"
+Log.file.path="logdevice.csv"
+Log.file.maxcount=10
+Log.file.maxsize=1MB
 ```
 
 ## Command‑Line Options
 
 | Option             | Short | Parameter    | Description                                    |
 |:-------------------|:------|:-------------|:-----------------------------------------------|
-| --version          | -v    | -            | Show program version                           |
-| --help             | -?    | -            | Show help                                      |
-| --file             | -f    | <filename>   | Configuration file (default: modbusua.conf)    |
+| `--version`       | `-v`      | `-`           | Program version                               
+| `--help`          | `-h/-?`   | `-`           | Help                                          
+| `--file`          | `-f`      | `<filename>`  | Specify configuration file (default `modbusua.conf`)
+| `--service-name`  | `-s`      | `<name>`      | Specify service name (default `modbusua`)
+| `--logdir`        |           | `<dir>`       | Specify log directory (default `log`)
 
 ## Usage Examples
 
@@ -306,6 +342,7 @@ modbusua/
 ├── src/                   # Source code
 │   ├── core/              # Common classes: string, variant, thread, etc.
 │   ├── ua/                # OPC UA server
+│   ├── port/              # Modbus ports
 │   └── device/            # Modbus devices
 ├── install/               # Installation scripts
 │   ├── windows/           # WiX MSI installer
