@@ -1,16 +1,26 @@
 cmake_minimum_required(VERSION 3.13) # 2.2 - case insensitive syntax
                                      # 3.13 included policy CMP0077
 
+if(POLICY CMP0177)
+    cmake_policy(SET CMP0177 NEW) # install() DESTINATION paths are normalized.
+endif()
+
 project(${CN_APP_NAME}-src VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 
 message(STATUS "CN: Start configure server '${CN_APP_NAME}' with version '${CN_APP_VERSION}' for project '${PROJECT_NAME}'")
 
 option(CN_USE_WSTRING "Use 16-bit string char" OFF)
 
-configure_file(${CMAKE_CURRENT_LIST_DIR}/core/CnConfig.h.in ${CMAKE_CURRENT_LIST_DIR}/core/CnConfig.h)
+# Configuration generation
+set(CN_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+set(CN_CONFIG_FILE_NAME "CnConfig.h")
+set(CN_CONFIG_FILE_PATH "${CN_CONFIG_DIR}/${CN_CONFIG_FILE_NAME}")
+
+message(STATUS "CN: ${PROJECT_NAME} configuration file '${CN_CONFIG_FILE_PATH}'")
+configure_file("${CMAKE_CURRENT_LIST_DIR}/core/${CN_CONFIG_FILE_NAME}.in" "${CN_CONFIG_FILE_PATH}")
 
 set(CN_HEADERS
-    core/CnConfig.h
+    #${CN_CONFIG_FILE_PATH}
     core/std/CnStd_string.h
     core/std/CnStd_stdio.h
     core/std/CnStd_iostream.h
@@ -179,18 +189,19 @@ if (WIN32)
         app/win/CnApp_win.cpp
     )
 
-    set(CN_WIN_RESOURCE_FILE win_resource.rc)
+    set(CN_WIN_RESOURCE_FILE "win_resource.rc")
+    set(CN_WIN_RESOURCE_FILE_TEMPL "${CMAKE_CURRENT_LIST_DIR}/${CN_WIN_RESOURCE_FILE}.in")
+    set(CN_WIN_RESOURCE_FILE_PATH "${CN_CONFIG_DIR}/${CN_WIN_RESOURCE_FILE}")
 
-    message(STATUS "CN: ${PROJECT_NAME} resource file for Windows: '${CN_WIN_RESOURCE_FILE}'")
+    message(STATUS "CN: ${PROJECT_NAME} resource file for Windows: '${CN_WIN_RESOURCE_FILE_PATH}'")
 
-    set(CN_WIN_ICON "IDI_ICON1\tICON\tDISCARDABLE\t\"${CN_APP_NAME}.ico\"")
+    set(CN_WIN_ICON "IDI_ICON1\tICON\tDISCARDABLE\t\"${CMAKE_CURRENT_LIST_DIR}/${CN_APP_NAME}.ico\"")
     set(CN_WIN_FILE "${CN_APP_NAME}")
     set(CN_WIN_OUTFILE "${CN_WIN_FILE}.exe")
-    configure_file(${CMAKE_CURRENT_LIST_DIR}/${CN_WIN_RESOURCE_FILE}.in 
-                   ${CMAKE_CURRENT_LIST_DIR}/${CN_WIN_RESOURCE_FILE})
+    configure_file(${CN_WIN_RESOURCE_FILE_TEMPL} ${CN_WIN_RESOURCE_FILE_PATH})
 
     set(CN_RESOURCES ${CN_RESOURCES}
-        ${CMAKE_CURRENT_LIST_DIR}/${CN_WIN_RESOURCE_FILE}           
+        ${CN_WIN_RESOURCE_FILE_PATH}           
     )
 else()
     set(CN_HEADERS ${CN_HEADERS}
@@ -225,6 +236,7 @@ include_directories(.
                     ua
                     ua/core
                     ${CMAKE_BINARY_DIR}/opcua/src_generated
+                    ${CN_CONFIG_DIR}
 )
 
 #target_compile_definitions(${CN_APP_NAME} PRIVATE QT_NO_KEYWORDS)
