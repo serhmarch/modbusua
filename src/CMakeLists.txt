@@ -46,7 +46,6 @@ set(CN_HEADERS
     core/CnUtils.h
     core/CnVariant.h
     core/CnModbus.h
-    core/CnModbusClient.h
     core/CnObject.h
     core/CnConfReader.h
     core/CnItemCsvReader.h
@@ -119,7 +118,6 @@ set(CN_SOURCES
     core/CnEventLoop.cpp
     core/CnThread.cpp
     core/CnModbus.cpp
-    core/CnModbusClient.cpp
     core/CnObject.cpp
     core/CnConfReader.cpp
     core/CnItemCsvReader.cpp

@@ -3,7 +3,7 @@
 #include <algorithm>
 
 #include <ModbusTcpPort.h>
-#include <CnModbusClient.h>
+#include <ModbusClient.h>
 
 #include "CnPort.h"
 #include <device/CnDevice.h>

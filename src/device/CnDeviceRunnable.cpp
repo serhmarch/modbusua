@@ -6,7 +6,7 @@
 
 #include <ModbusPort.h>
 #include <ModbusClientPort.h>
-#include <CnModbusClient.h>
+#include <ModbusClient.h>
 
 using namespace std;
 
@@ -18,7 +18,7 @@ CnDeviceRunnable::CnDeviceRunnable(CnDevice *device, ModbusClientPort *port)
     m_device->IncrementRef();
     m_logger = m_device->logger();
 
-    m_plc = new CnModbusClient(d.ModbusUnit, port);
+    m_plc = new ModbusClient(d.ModbusUnit, port);
 
 	m_state = STATE_MAIN;
     m_isEnable = true;

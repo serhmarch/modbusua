@@ -30,7 +30,6 @@ set(CN_SRC_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/core/CnUtils.h
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/core/CnVariant.h
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/core/CnModbus.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../src/core/CnModbusClient.h
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/core/CnObject.h
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/core/CnConfReader.h
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/core/CnItemCsvReader.h
@@ -103,7 +102,6 @@ set(CN_SRC_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/core/CnEventLoop.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/core/CnThread.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/core/CnModbus.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../src/core/CnModbusClient.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/core/CnObject.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/core/CnConfReader.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/core/CnItemCsvReader.cpp
@@ -213,7 +211,6 @@ set(CN_TESTS_SOURCES
     core/CnItemCsvReader_test.cpp
     core/CnItemLexer_test.cpp
     core/CnModbus_test.cpp
-    core/CnModbusClient_test.cpp
     log/CnLogger_test.cpp
     log/CnLoggerManager_test.cpp
     log/CnLoggerFile_test.cpp

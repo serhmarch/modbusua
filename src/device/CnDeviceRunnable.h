@@ -11,7 +11,7 @@
 #include <CnGlobal.h>
 
 class ModbusClientPort;
-class CnModbusClient;
+class ModbusClient;
 
 class CnLoggerManager;
 
@@ -50,7 +50,7 @@ public:
     inline CnDevice *device() const { return m_device; }
 
     /// \details Returns a pointer to the Modbus interface for the port.
-    inline CnModbusClient *modbusClient() const { return m_plc; }
+    inline ModbusClient *modbusClient() const { return m_plc; }
 
 public:
     /// \details Returns `true` if this device/PLC is available for the execution sequence, `false` otherwise.
@@ -101,7 +101,7 @@ private: // Logger
     CnLoggerManager *m_logger;
 
 private:
-    CnModbusClient *m_plc;
+    ModbusClient *m_plc;
 
 	CnDevice *m_device;
 
