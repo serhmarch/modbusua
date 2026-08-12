@@ -95,12 +95,12 @@ bool CnCfgDeviceItemParser::tryParseModbusItem()
         }
         else if (tryParseDataTypeSuffix() && hasError())
             return true;
-        while (m_lexer.currentToken().isSymbolComma())
+        if (m_lexer.currentToken().isSymbolComma())
         {
             m_lexer.nextToken(); // move to next token for further parsing
-            if (!tryParseModbusItemMessageId() && !tryParseModbusItemPeriod())
+            if (!tryParseModbusItemParams())
             {
-                CnStd::snprintf(m_lastError, CN_CDIP_ERROR_SZ, CnSTR("Parsing Modbus Item: item reference must have format '{T}xxxxx[-{T}yyyyy <arraysuffix>|<suffix>][, {msgid=<msgid>|<period>}]*'. There is must be 'msgid'-keyword after comma"));
+                CnStd::snprintf(m_lastError, CN_CDIP_ERROR_SZ, CnSTR("Parsing Modbus Item: item reference must have format '{T}xxxxx[-{T}yyyyy <arraysuffix>|<suffix>][, {msgid=<msgid>|period=<period>|access=<access>}]'. Unknown parameter"));
                 return true;
             }
             if (hasError())
@@ -111,6 +111,36 @@ bool CnCfgDeviceItemParser::tryParseModbusItem()
             CnStd::snprintf(m_lastError, CN_CDIP_ERROR_SZ, CnSTR("Parsing Modbus Item: item reference must have format '{T}xxxxx[-{T}yyyyy <arraysuffix>|<suffix>][, msgid=<msgid>]'"));
             return true;
         }
+        return true;
+    }
+    return false;
+}
+
+bool CnCfgDeviceItemParser::tryParseModbusItemPeriod()
+{
+    if (m_lexer.currentToken().isInt())
+    {
+        m_parsed.period = m_lexer.currentToken().Int();
+        m_lexer.nextToken(); // move to next token for further parsing
+        return true;
+    }
+    if (m_lexer.currentToken().Word() == CnSTR("PERIOD"))
+    {
+        if (m_lexer.nextToken().Symbol() != CnCHR('='))
+        {
+            CnStd::snprintf(m_lastError, CN_CDIP_ERROR_SZ, CnSTR("Parsing ModbusItem period: item reference must have format '{T}xxxxx [<suffix>][, period=<period>]'. There is no '='-symbol after 'period'-keyword"));
+            return true;
+        }
+        if (m_lexer.nextToken().isInt())
+            m_parsed.period = m_lexer.currentToken().Int();
+        else if (m_lexer.currentToken().isWord())
+            m_parsed.period = Cn::toInt(m_lexer.currentToken().Word());
+        else
+        {
+            CnStd::snprintf(m_lastError, CN_CDIP_ERROR_SZ, CnSTR("Parsing ModbusItem period: item reference must have format '{T}xxxxx [<suffix>][, period=<period>]'. Unknown <period>"));
+            return true;
+        }
+        m_lexer.nextToken(); // move to next token for further parsing
         return true;
     }
     return false;
@@ -140,15 +170,64 @@ bool CnCfgDeviceItemParser::tryParseModbusItemMessageId()
     return false;
 }
 
-bool CnCfgDeviceItemParser::tryParseModbusItemPeriod()
+bool CnCfgDeviceItemParser::tryParseModbusItemAccess()
 {
-    if (m_lexer.currentToken().isInt())
+    if (m_lexer.currentToken().Word() == CnSTR("ACCESS"))
     {
-        m_parsed.period = m_lexer.currentToken().Int();
+        if (m_lexer.nextToken().Symbol() != CnCHR('='))
+        {
+            CnStd::snprintf(m_lastError, CN_CDIP_ERROR_SZ, CnSTR("Parsing ModbusItem access: item reference must have format '{T}xxxxx [<suffix>][, access=<access>]'. There is no '='-symbol after 'access'-keyword"));
+            return true;
+        }
+        if (m_lexer.nextToken().isWord())
+        {
+            if (m_lexer.currentToken().Word() == CnSTR("R") || m_lexer.currentToken().Word() == CnSTR("RO"))
+                m_parsed.access = Cn::Access_Read;
+            else if (m_lexer.currentToken().Word() == CnSTR("W") || m_lexer.currentToken().Word() == CnSTR("WO"))
+                m_parsed.access = Cn::Access_Write;
+            else if (m_lexer.currentToken().Word() == CnSTR("RW") || m_lexer.currentToken().Word() == CnSTR("WR"))
+                m_parsed.access = Cn::Access_ReadWrite;
+            else
+            {
+                CnStd::snprintf(m_lastError, CN_CDIP_ERROR_SZ, CnSTR("Parsing ModbusItem access: item reference must have format '{T}xxxxx [<suffix>][, access=<access>]'. Unknown <access>"));
+                return true;
+            }
+        }
+        else
+        {
+            CnStd::snprintf(m_lastError, CN_CDIP_ERROR_SZ, CnSTR("Parsing ModbusItem message Id: item reference must have format '{T}xxxxx [<suffix>][, access=<access>]'. Unknown <access>"));
+            return true;
+        }
         m_lexer.nextToken(); // move to next token for further parsing
         return true;
     }
     return false;
+}
+
+bool CnCfgDeviceItemParser::tryParseModbusItemParams()
+{
+    bool res = false;
+    while (!m_lexer.currentToken().isEOL())
+    {
+        if (!tryParseModbusItemPeriod   () &&
+            !tryParseModbusItemMessageId() &&
+            !tryParseModbusItemAccess   ())
+        {
+            return false;
+        }
+        res = true;
+        if (hasError())
+            return true;
+        if (!m_lexer.currentToken().isSymbolComma())
+            break;
+        m_lexer.nextToken(); // move to next token for further parsing
+    }
+    if (!m_lexer.currentToken().isEOL())
+    {
+        CnStd::snprintf(m_lastError, CN_CDIP_ERROR_SZ, CnSTR("Parsing ModbusItem: item reference must have format '{T}xxxxx[-{T}yyyyy <arraysuffix>|<suffix>][, {msgid=<msgid>|period=<period>|access=<access>}]'. Unknown parameter"));
+        return true;
+    }
+    return res;
 }
 
 bool CnCfgDeviceItemParser::tryParseDataTypeSuffix()
@@ -195,6 +274,7 @@ CnCfgDeviceItem *CnCfgDeviceItemParser::createItem()
         item->setCount(m_parsed.count);
         item->setPeriod(m_parsed.period);
         item->setMessageId(m_parsed.messageId);
+        item->setAccess(m_parsed.access);
         //if (!item)
         //    CnStd::snprintf(m_lastError, CN_CDIP_ERROR_SZ, CnSTR("Unapplied DataType for Modbus ")+Cn::toString(m_parsed.subtype)+CnSTR("x-Item: ") + Cn::DataSuffixToString(m_parsed.suffix);
         break;

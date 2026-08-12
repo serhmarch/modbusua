@@ -153,7 +153,7 @@ void CnVariant::clear()
     switch (m_type)                         \
     {                                       \
     case vString:                           \
-        return Cn::to_##Type(*m_string, ok);\
+        return Cn::parse_##Type(*m_string, ok);\
     case vBool:                             \
     case vInt8:                             \
     case vUInt8:                            \

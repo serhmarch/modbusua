@@ -34,6 +34,12 @@ public:
     /// \details Function returns the corresponding access type `Cn::Access` for the variable.
     virtual Cn::Access access() const;
 
+    /// \details Function returns `true` if the variable is readable, `false` otherwise.
+    inline bool isReadable() const { return (this->access() & Cn::Access_Read) != 0; }
+
+    /// \details Function returns `true` if the variable is writable, `false` otherwise.
+    inline bool isWritable() const { return (this->access() & Cn::Access_Write) != 0; }
+
     /// \details Function returns the name of the current `item reference`.
     inline const CnString &name() const { return m_name; }
 
@@ -51,6 +57,9 @@ public:
 
     /// \details Function sets the description of the current `item reference`.
     inline void setDescription(const CnChar *descr) { m_descr = descr; }
+
+    /// \details Function returns the name of the current `item reference` in a human-readable format.
+    virtual const CnString &paramString() const;
 
     /// \details Function returns a pointer to any data structure that can be set for the current `item reference`.
     inline void *context() const { return m_context; }

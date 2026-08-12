@@ -51,6 +51,12 @@ public:
     CnDeviceModbusItem(CnDevice *device, uint16_t offset, int period, const CnString &messageId = CnString());
 
 public:
+    /// \details Return current access type for the variable. This function is overridden in derived classes to return the access type for the variable.
+    Cn::Access access() const override { return Cn::Access_Read; }
+
+    /// \details Sets the access type for the variable. This function is overridden in derived classes to set the access type for the variable.
+    virtual void setAccess(Cn::Access access) {}
+
     /// \details 
     inline void lock() { m_cs.lock(); }
     
@@ -86,7 +92,7 @@ public:
     inline void setPeriod(int period) { m_period = period; }
 
     /// \details Returns `true` if this element is not available for polling.
-    inline bool isReadDisabled() const { return m_period == CN_MODBUS_PERIOD_DISABLE_VALUE; }
+    inline bool isReadDisabled() const { return (access() == Cn::Access_Write) || (m_period == CN_MODBUS_PERIOD_DISABLE_VALUE); }
 
     /// \details Returns a pointer to the Modbus message object this item belongs to.
     inline CnDeviceMessage *message() const { CnCriticalSectionLocker _(&m_cs); return m_message; }
@@ -340,7 +346,7 @@ public:
 public:
     /// \details Returns `Cn::Data_String` as the `Cn::DataType` for the byte-array variable.
     Cn::DataType dataType() const override { return Cn::Data_String; }
-    void *data() override { return m_data.data(); }
+    void *data() override { return this->m_data.data(); }
     Cn::DataSuffix dataSuffix() const override { return Cn::Suffix_ByteArray; }
     CnVariant value(Cn::StatusCode *status = nullptr, CnTimestamp *timestamp = nullptr) const override;
     void updateInner(const CnVariant &value, Cn::StatusCode status, CnTimestamp timestamp) override;
@@ -378,7 +384,7 @@ public:
 
 public:
     /// \details Returns size of the Modbus byte-array in bits
-    uint16_t count() const override { return m_count; }
+    uint16_t count() const override { return this->m_count; }
 
 protected:
     uint16_t m_count;
@@ -407,7 +413,7 @@ public:
 
 public:
     /// \details Returns size of the Modbus byte-array in registers
-    uint16_t count() const override { return static_cast<uint16_t>(m_data.size() / MB_REGE_SZ_BYTES); }
+    uint16_t count() const override { return static_cast<uint16_t>(this->m_data.size() / MB_REGE_SZ_BYTES); }
 };
 
 // ------------------------------------------------------------------------------------------
@@ -423,14 +429,19 @@ template <class T>
 class CnDeviceModbusItem0xT : public CnDeviceModbusItemBitsT<T>
 {
 public:
-    using CnDeviceModbusItemBitsT<T>::CnDeviceModbusItemBitsT;
+    CnDeviceModbusItem0xT(CnDevice *device, uint16_t offset, int period, const CnString &messageId = CnString(), Cn::Access access = Cn::Access_ReadWrite) :
+        CnDeviceModbusItemBitsT<T>(device, offset, period, messageId),
+        m_access(access) {}
 
 public:
-    /// \details  The `access()` method returns `Cn::Access_ReadWrite`.
-    Cn::Access access() const override { return Cn::Access_ReadWrite; }
+    Cn::Access access() const override { return this->m_access; }
+    void setAccess(Cn::Access access) override { this->m_access = access; }
 
     /// \details Returns memory type `0x` for a 'discrete output' (coil, 0x-bit) cell.
     Modbus::MemoryType memoryType() const override { return Modbus::Memory_0x; }
+
+protected:
+     Cn::Access m_access;
 };
 
 /*! \brief Modbus `item reference` class of boolean type for 'discrete output' (coil, 0x-bit) memory cell.
@@ -468,14 +479,19 @@ template <class T>
 class CnDeviceModbusItemSwapped0xT : public CnDeviceModbusItemSwappedBitsT<T>
 {
 public:
-    using CnDeviceModbusItemSwappedBitsT<T>::CnDeviceModbusItemSwappedBitsT;
+    CnDeviceModbusItemSwapped0xT(CnDevice *device, uint16_t offset, int period, const CnString &messageId = CnString(), Cn::Access access = Cn::Access_ReadWrite) :
+        CnDeviceModbusItemSwappedBitsT<T>(device, offset, period, messageId),
+        m_access(access) {}
 
 public:
-    /// \details  The `access()` method returns `Cn::Access_ReadWrite`.
-    Cn::Access access() const override { return Cn::Access_ReadWrite; }
+    Cn::Access access() const override { return this->m_access; }
+    void setAccess(Cn::Access access) override { this->m_access = access; }
 
     /// \details Returns memory type `0x` for a 'discrete output' (coil, 0x-bit) cell.
     Modbus::MemoryType memoryType() const override { return Modbus::Memory_0x; }
+
+protected:
+     Cn::Access m_access;
 };
 
 typedef CnDeviceModbusItemSwapped0xT<int32_t > CnDeviceModbusItem0xSwappedInt32 ; //!< Modbus 'discrete output' (coil, 0x-bit) swapped-register type `Int32`
@@ -493,14 +509,19 @@ typedef CnDeviceModbusItemSwapped0xT<double  > CnDeviceModbusItem0xSwappedDouble
 class CnDeviceModbusItem0xByteArray : public CnDeviceModbusItemBitsByteArray
 {
 public:
-    using CnDeviceModbusItemBitsByteArray::CnDeviceModbusItemBitsByteArray;
+    CnDeviceModbusItem0xByteArray(CnDevice *device, uint16_t offset, uint16_t count, int period, const CnString &messageId = CnString(), Cn::Access access = Cn::Access_ReadWrite) :
+        CnDeviceModbusItemBitsByteArray(device, offset, count, period, messageId),
+        m_access(access) {}
 
 public:
-    /// \details  The `access()` method returns `Cn::Access_Read` (read-only).
-    Cn::Access access() const override { return Cn::Access_Read; }
+    Cn::Access access() const override { return this->m_access; }
+    void setAccess(Cn::Access access) override { this->m_access = access; }
 
     /// \details Returns memory type `0x` for 'discrete output' (coil, 0x-bit).
     Modbus::MemoryType memoryType() const override { return Modbus::Memory_0x; }
+
+protected:
+    Cn::Access m_access;
 };
 
 
@@ -520,9 +541,6 @@ public:
     using CnDeviceModbusItemBitsT<T>::CnDeviceModbusItemBitsT;
 
 public:
-    /// \details  The `access()` method returns `Cn::Access_Read` (read-only).
-    Cn::Access access() const override { return Cn::Access_Read; }
-
     /// \details Returns memory type `1x` for 'discrete input' (1x-bit).
     Modbus::MemoryType memoryType() const override { return Modbus::Memory_1x; }
 };
@@ -565,9 +583,6 @@ public:
     using CnDeviceModbusItemSwappedBitsT<T>::CnDeviceModbusItemSwappedBitsT;
 
 public:
-    /// \details  The `access()` method returns `Cn::Access_Read` (read-only).
-    Cn::Access access() const override { return Cn::Access_Read; }
-
     /// \details Returns memory type `1x` for 'discrete input' (1x-bit).
     Modbus::MemoryType memoryType() const override { return Modbus::Memory_1x; }
 };
@@ -592,9 +607,6 @@ public:
     using CnDeviceModbusItemBitsByteArray::CnDeviceModbusItemBitsByteArray;
 
 public:
-    /// \details  The `access()` method returns `Cn::Access_Read` (read-only).
-    Cn::Access access() const override { return Cn::Access_Read; }
-
     /// \details Returns memory type `1x` for 'discrete input' (1x-bit).
     Modbus::MemoryType memoryType() const override { return Modbus::Memory_1x; }
 };
@@ -616,9 +628,6 @@ public:
     using CnDeviceModbusItemRegsT<T>::CnDeviceModbusItemRegsT;
 
 public:
-    /// \details  The `access()` method returns `Cn::Access_Read` (read-only).
-    Cn::Access access() const override { return Cn::Access_Read; }
-
     /// \details Returns memory type `3x` for 'analog input' (3x-register).
     Modbus::MemoryType memoryType() const override { return Modbus::Memory_3x; }
 };
@@ -661,9 +670,6 @@ public:
     using CnDeviceModbusItemSwappedRegsT<T>::CnDeviceModbusItemSwappedRegsT;
 
 public:
-    /// \details  The `access()` method returns `Cn::Access_Read` (read-only).
-    Cn::Access access() const override { return Cn::Access_Read; }
-
     /// \details Returns memory type `3x` for 'analog input' (3x-register).
     Modbus::MemoryType memoryType() const override { return Modbus::Memory_3x; }
 };
@@ -687,9 +693,6 @@ public:
     using CnDeviceModbusItemRegsByteArray::CnDeviceModbusItemRegsByteArray;
 
 public:
-    /// \details  The `access()` method returns `Cn::Access_Read` (read-only).
-    Cn::Access access() const override { return Cn::Access_Read; }
-
     /// \details Returns memory type `3x` for 'analog input' (3x-register).
     Modbus::MemoryType memoryType() const override { return Modbus::Memory_3x; }
 };
@@ -708,14 +711,19 @@ template <class T>
 class CnDeviceModbusItem4xT : public CnDeviceModbusItemRegsT<T>
 {
 public:
-    using CnDeviceModbusItemRegsT<T>::CnDeviceModbusItemRegsT;
+    CnDeviceModbusItem4xT(CnDevice *device, uint16_t offset, int period, const CnString &messageId = CnString(), Cn::Access access = Cn::Access_ReadWrite) :
+        CnDeviceModbusItemRegsT<T>(device, offset, period, messageId),
+        m_access(access) {}
 
 public:
-    /// \details  The `access()` method returns `Cn::Access_ReadWrite`.
-    Cn::Access access() const override { return Cn::Access_ReadWrite; }
+    Cn::Access access() const override { return this->m_access; }
+    void setAccess(Cn::Access access) override { this->m_access = access; }
 
     /// \details Returns memory type `4x` for 'analog output/holding register' (4x-register).
     Modbus::MemoryType memoryType() const override { return Modbus::Memory_4x; }
+
+protected:
+    Cn::Access m_access;
 };
 
 /*! \brief Modbus `item reference` class of boolean type for 'analog output/holding register' (4x-register) memory cell.
@@ -726,7 +734,8 @@ public:
 class CnDeviceModbusItem4xBool : public CnDeviceModbusItem4xT<bool>
 {
 public:
-    using CnDeviceModbusItem4xT<bool>::CnDeviceModbusItem4xT;
+    CnDeviceModbusItem4xBool(CnDevice *device, uint16_t offset, int period, const CnString &messageId = CnString(), Cn::Access access = Cn::Access_ReadWrite) :
+        CnDeviceModbusItem4xT<bool>(device, offset, period, messageId, access) {}
 
 public:
     /// \details Returns variable size in registers. For boolean always returns `1`.
@@ -753,14 +762,19 @@ template <class T>
 class CnDeviceModbusItemSwapped4xT : public CnDeviceModbusItemSwappedRegsT<T>
 {
 public:
-    using CnDeviceModbusItemSwappedRegsT<T>::CnDeviceModbusItemSwappedRegsT;
+    CnDeviceModbusItemSwapped4xT(CnDevice *device, uint16_t offset, int period, const CnString &messageId = CnString(), Cn::Access access = Cn::Access_ReadWrite) :
+        CnDeviceModbusItemSwappedRegsT<T>(device, offset, period, messageId),
+        m_access(access) {}
 
 public:
-    /// \details  The `access()` method returns `Cn::Access_ReadWrite`.
-    Cn::Access access() const override { return Cn::Access_ReadWrite; }
+    Cn::Access access() const override { return this->m_access; }
+    void setAccess(Cn::Access access) override { this->m_access = access; }
 
     /// \details Returns memory type `4x` for 'analog output/holding register' (4x-register).
     Modbus::MemoryType memoryType() const override { return Modbus::Memory_4x; }
+
+protected:
+    Cn::Access m_access;
 };
 
 typedef CnDeviceModbusItemSwapped4xT<int32_t > CnDeviceModbusItem4xSwappedInt32 ; //!< Modbus 'аналоговий вихід/регістр зберігання' (4x-регістр) зі зміненим порядком регістрів типу `Int32 `
@@ -779,14 +793,19 @@ typedef CnDeviceModbusItemSwapped4xT<double  > CnDeviceModbusItem4xSwappedDouble
 class CnDeviceModbusItem4xByteArray : public CnDeviceModbusItemRegsByteArray
 {
 public:
-    using CnDeviceModbusItemRegsByteArray::CnDeviceModbusItemRegsByteArray;
+    CnDeviceModbusItem4xByteArray(CnDevice *device, uint16_t offset, uint16_t count, int period, const CnString &messageId = CnString(), Cn::Access access = Cn::Access_ReadWrite) :
+        CnDeviceModbusItemRegsByteArray(device, offset, count, period, messageId),
+        m_access(access) {}
 
 public:
-    /// \details  The `access()` method returns `Cn::Access_ReadWrite`.
-    Cn::Access access() const override { return Cn::Access_ReadWrite; }
+    Cn::Access access() const override { return this->m_access; }
+    void setAccess(Cn::Access access) override { this->m_access = access; }
 
     /// \details Returns memory type `4x` for 'analog output/holding register' (4x-register).
     Modbus::MemoryType memoryType() const override { return Modbus::Memory_4x; }
+
+protected:
+    Cn::Access m_access;
 };
 
 namespace Cn {
@@ -797,7 +816,8 @@ CnDeviceModbusItem *createDeviceModbusItem(Cn::DataSuffix type,
                                            uint16_t offset, 
                                            uint16_t count,
                                            int period,
-                                           const CnString &messageId = CnString());
+                                           const CnString &messageId = CnString(),
+                                           Cn::Access access = Cn::Access_ReadWrite);
 
 } // namespace Cn
 

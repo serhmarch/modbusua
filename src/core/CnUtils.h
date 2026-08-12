@@ -254,6 +254,120 @@ unsigned int toUInt(const CnChar *s, bool *ok = nullptr, int base = 10);
 /// \details Returns an `unsigned int` value converted from the string `s` using the base `base`. Same as `toUInt(const CnChar*,bool*,int)`.
 inline unsigned int toUInt(const CnString &s, bool *ok = nullptr, int base = 10) { return toUInt(s.data(), ok, base); }
 
+/// \details Same as `bool toBool(const CnChar*,bool*)`.
+inline bool parse_bool(const CnChar *s, bool *ok = nullptr) { return toBool(s, ok); }
+
+/// \details Same as `bool toBool(const CnString&,bool*)`.
+inline bool parse_bool(const CnString &s, bool *ok = nullptr) { return toBool(s, ok); }
+
+/// \details Returns a `int8_t` value converted from the string `s` using prefixes to define base:
+/// - `0x` or `0X` for hexadecimal (base 16)
+/// - `0b` or `0B` for binary (base 2)
+/// - `0` for octal (base 8)
+/// - no prefix for decimal (base 10)
+/// Returns `0` if the conversion fails.
+/// If `ok` is not `nullptr`, failure is indicated by setting `*ok` to `false`, and success by setting `*ok` to `true`.
+int8_t parse_int8_t(const CnChar *s, bool *ok = nullptr);
+
+/// \details Returns a `int8_t` value converted from the string `s` using prefixes to define base. Same as `parse_int8_t(const CnChar*,bool*)`.
+inline int8_t parse_int8_t(const CnString &s, bool *ok = nullptr) { return parse_int8_t(s.data(), ok); }
+
+/// \details Returns a `uint8_t` value converted from the string `s` using prefixes to define base:
+/// - `0x` or `0X` for hexadecimal (base 16)
+/// - `0b` or `0B` for binary (base 2)
+/// - `0` for octal (base 8)
+/// - no prefix for decimal (base 10)
+/// Returns `0` if the conversion fails.
+/// If `ok` is not `nullptr`, failure is indicated by setting `*ok` to `false`, and success by setting `*ok` to `true`.
+uint8_t parse_uint8_t(const CnChar *s, bool *ok = nullptr);
+
+/// \details Returns a `uint8_t` value converted from the string `s` using prefixes to define base. Same as `parse_uint8_t(const CnChar*,bool*)`.
+inline uint8_t parse_uint8_t(const CnString &s, bool *ok = nullptr) { return parse_uint8_t(s.data(), ok); }
+
+/// \details Returns a `int16_t` value converted from the string `s` using prefixes to define base:
+/// - `0x` or `0X` for hexadecimal (base 16)
+/// - `0b` or `0B` for binary (base 2)
+/// - `0` for octal (base 8)
+/// - no prefix for decimal (base 10)
+/// Returns `0` if the conversion fails.
+/// If `ok` is not `nullptr`, failure is indicated by setting `*ok` to `false`, and success by setting `*ok` to `true`.
+int16_t parse_int16_t(const CnChar *s, bool *ok = nullptr);
+
+/// \details Returns a `int16_t` value converted from the string `s` using prefixes to define base. Same as `parse_int16_t(const CnChar*,bool*)`.
+inline int16_t parse_int16_t(const CnString &s, bool *ok = nullptr) { return parse_int16_t(s.data(), ok); }
+
+/// \details Returns a `uint16_t` value converted from the string `s` using prefixes to define base:
+/// - `0x` or `0X` for hexadecimal (base 16)
+/// - `0b` or `0B` for binary (base 2)
+/// - `0` for octal (base 8)
+/// - no prefix for decimal (base 10)
+/// Returns `0` if the conversion fails.
+/// If `ok` is not `nullptr`, failure is indicated by setting `*ok` to `false`, and success by setting `*ok` to `true`.
+uint16_t parse_uint16_t(const CnChar *s, bool *ok = nullptr);
+
+/// \details Returns a `uint16_t` value converted from the string `s` using prefixes to define base. Same as `parse_uint16_t(const CnChar*,bool*)`.
+inline uint16_t parse_uint16_t(const CnString &s, bool *ok = nullptr) { return parse_uint16_t(s.data(), ok); }
+
+/// \details Returns a `int32_t` value converted from the string `s` using prefixes to define base:
+/// - `0x` or `0X` for hexadecimal (base 16)
+/// - `0b` or `0B` for binary (base 2)
+/// - `0` for octal (base 8)
+/// - no prefix for decimal (base 10)
+/// Returns `0` if the conversion fails.
+/// If `ok` is not `nullptr`, failure is indicated by setting `*ok` to `false`, and success by setting `*ok` to `true`.
+int32_t parse_int32_t(const CnChar *s, bool *ok = nullptr);
+
+/// \details Returns a `int32_t` value converted from the string `s` using prefixes to define base. Same as `parse_int32_t(const CnChar*,bool*)`.
+inline int32_t parse_int32_t(const CnString &s, bool *ok = nullptr) { return parse_int32_t(s.data(), ok); }
+
+/// \details Returns a `uint32_t` value converted from the string `s` using prefixes to define base:
+/// - `0x` or `0X` for hexadecimal (base 16)
+/// - `0b` or `0B` for binary (base 2)
+/// - `0` for octal (base 8)
+/// - no prefix for decimal (base 10)
+/// Returns `0` if the conversion fails.
+/// If `ok` is not `nullptr`, failure is indicated by setting `*ok` to `false`, and success by setting `*ok` to `true`.
+uint32_t parse_uint32_t(const CnChar *s, bool *ok = nullptr);
+
+/// \details Returns a `uint32_t` value converted from the string `s` using prefixes to define base. Same as `parse_uint32_t(const CnChar*,bool*)`.
+inline uint32_t parse_uint32_t(const CnString &s, bool *ok = nullptr) { return parse_uint32_t(s.data(), ok); }
+
+/// \details Returns a `int64_t` value converted from the string `s` using prefixes to define base:
+/// - `0x` or `0X` for hexadecimal (base 16)
+/// - `0b` or `0B` for binary (base 2)
+/// - `0` for octal (base 8)
+/// - no prefix for decimal (base 10)
+/// Returns `0` if the conversion fails.
+/// If `ok` is not `nullptr`, failure is indicated by setting `*ok` to `false`, and success by setting `*ok` to `true`.
+int64_t parse_int64_t(const CnChar *s, bool *ok = nullptr);
+
+/// \details Returns a `int64_t` value converted from the string `s` using prefixes to define base. Same as `parse_int64_t(const CnChar*,bool*)`.
+inline int64_t parse_int64_t(const CnString &s, bool *ok = nullptr) { return parse_int64_t(s.data(), ok); }
+
+/// \details Returns a `uint64_t` value converted from the string `s` using prefixes to define base:
+/// - `0x` or `0X` for hexadecimal (base 16)
+/// - `0b` or `0B` for binary (base 2)
+/// - `0` for octal (base 8)
+/// - no prefix for decimal (base 10)
+/// Returns `0` if the conversion fails.
+/// If `ok` is not `nullptr`, failure is indicated by setting `*ok` to `false`, and success by setting `*ok` to `true`.
+uint64_t parse_uint64_t(const CnChar *s, bool *ok = nullptr);
+
+/// \details Returns a `uint64_t` value converted from the string `s` using prefixes to define base. Same as `parse_uint64_t(const CnChar*,bool*)`.
+inline uint64_t parse_uint64_t(const CnString &s, bool *ok = nullptr) { return parse_uint64_t(s.data(), ok); }
+
+/// \details Same as `float toFloat(const CnChar*,bool*)`.
+inline float parse_float(const CnChar *s, bool *ok = nullptr) { return toFloat(s, ok); }
+
+/// \details Same as `float toFloat(const CnString&,bool*)`.
+inline float parse_float(const CnString &s, bool *ok = nullptr) { return toFloat(s, ok); }
+
+/// \details Same as `double toDouble(const CnChar*,bool*)`.
+inline double parse_double(const CnChar *s, bool *ok = nullptr) { return toDouble(s, ok); }
+
+/// \details Same as `double toDouble(const CnString&,bool*)`.
+inline double parse_double(const CnString &s, bool *ok = nullptr) { return toDouble(s, ok); }
+
 /// \details Returns a copy of the first `size` characters of the string `s` in uppercase.
 CnString toUpper(const CnChar *s, size_t size);
 
@@ -369,6 +483,9 @@ CnString DataSuffixToString(DataSuffix suffix);
 
 /// \details
 DataSuffix DataTypeToSuffix(DataType dataType);
+
+/// \details
+const CnChar* DataTypeToShortSuffixChars(DataType dataType);
 
 /// \details
 DataSuffix DataTypeToSwappedSuffix(DataType dataType);

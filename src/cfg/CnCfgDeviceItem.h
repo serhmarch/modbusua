@@ -32,7 +32,8 @@ public:
         m_memoryType(Modbus::Memory_Unknown),
         m_offset(0),
         m_count(0),
-        m_period(CN_MODBUS_PERIOD_DEFAULT_VALUE)
+        m_period(CN_MODBUS_PERIOD_DEFAULT_VALUE),
+        m_access(Cn::Access_ReadWrite)
         {}
 
 public:
@@ -90,6 +91,12 @@ public:
     /// \details Sets an optional message identifier.
     inline void setMessageId(const CnString& v) { m_messageId = v; }
 
+    /// \details Returns the access type (read/write).
+    inline Cn::Access access() const { return m_access; }
+
+    /// \details Sets the access type (read/write).
+    inline void setAccess(Cn::Access v) { m_access = v; }
+
 private:
     CnString m_name;
     CnString m_itemReference;
@@ -100,6 +107,7 @@ private:
     uint16_t m_count;
     int m_period;
     CnString m_messageId;
+    Cn::Access m_access;
 };
 
 #endif // CNCFGDEVICEITEM_H

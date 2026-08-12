@@ -56,8 +56,10 @@ public:
 
 private:
     bool tryParseModbusItem();
-    bool tryParseModbusItemMessageId();
     bool tryParseModbusItemPeriod();
+    bool tryParseModbusItemMessageId();
+    bool tryParseModbusItemAccess();
+    bool tryParseModbusItemParams();
     bool tryParseDataTypeSuffix();
 
 private:
@@ -77,6 +79,7 @@ private:
         Cn::DataSuffix suffix;
         CnString messageId;
         int period;
+        Cn::Access access;
 
         void clear() 
         {
@@ -85,6 +88,7 @@ private:
             suffix = Cn::Suffix_Default;
             messageId.clear();
             period = -1;
+            access = Cn::Access_ReadWrite;
         }
     } m_parsed;
 

@@ -12,3 +12,8 @@
 * Added the `changelog.md` file to the installer's `doc` folder for Windows
 * Updated ModbusLib version to 0.4.9                                                
 * Updated documentation
+
+# 0.4.2
+
+* Fixed Device config synchronization, issue #1
+* Added the `access modifier` (`access`) configuration parameter for Modbus ItemReference

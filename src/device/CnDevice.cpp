@@ -324,7 +324,7 @@ void CnDevice::setCfgDeviceInner(const CnCfgDevicePtr &cfg)
 
 bool CnDevice::compareModbusItem(const CnCfgDeviceItem *cfg, const CnDeviceModbusItem *item)
 {
-    if (item->memoryType() != cfg->memoryType())
+    if (item->memoryType() != cfg->memoryType() || item->access() != cfg->access())
         return false;
     Cn::DataType type = item->dataType();
     Cn::DataSuffix suffix = item->dataSuffix();   
@@ -385,7 +385,13 @@ CnDeviceBaseItem *CnDevice::createItem(const CnCfgDeviceItem *cfg)
     case CnDeviceBaseItem::Item_Modbus:
     {
         int period = CN_MODBUS_DEVICE_PERIOD(cfg->period(), this->CfgDefaultPeriod());
-        item = createDeviceModbusItem(cfg->dataSuffix(), cfg->memoryType(), this, cfg->offset(), cfg->count(), period, cfg->messageId());
+        item = createDeviceModbusItem(cfg->dataSuffix(), 
+                                      cfg->memoryType(), 
+                                      this,
+                                      cfg->offset(),
+                                      cfg->count(),
+                                      period, cfg->messageId(),
+                                      cfg->access());
     }
         break;
     default:
@@ -415,7 +421,7 @@ void CnDevice::addPokeItemInner(CnDeviceModbusItem *origin, const CnVariant &v)
 {
     if (!m_items->hasItem(origin))
         return;
-    if (!this->isEnableDevice())
+    if (!this->isEnableDevice() || !origin->isWritable())
         return;
     CnDeviceModbusItem *item = Cn::createDeviceModbusItem(origin->dataSuffix(),
                                                           origin->memoryType(),

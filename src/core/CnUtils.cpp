@@ -199,6 +199,86 @@ unsigned int toUInt(const CnChar *s, bool *ok, int base)
     return 0;
 }
 
+static const CnChar* parsePrefix(const CnChar *s, int *base)
+{
+    if (s[0] == CnCHR('0'))
+    {
+        if (s[1] == CnCHR('x') || s[1] == CnCHR('X'))
+        {
+            *base = 16;
+            return s + 2;
+        }
+        else if (s[1] == CnCHR('b') || s[1] == CnCHR('B'))
+        {
+            *base = 2;
+            return s + 2;
+        }
+        else if (s[1] == CnCHR('o') || s[1] == CnCHR('O'))
+        {
+            *base = 8;
+            return s + 2;
+        }
+    }
+    *base = 10;
+    return s;
+}
+
+int8_t parse_int8_t(const CnChar *s, bool *ok)
+{
+    int base;
+    auto p = parsePrefix(s, &base);
+    return toInt8(p, ok, base);
+}
+
+uint8_t parse_uint8_t(const CnChar *s, bool *ok)
+{
+    int base;
+    auto p = parsePrefix(s, &base);
+    return toUInt8(p, ok, base);
+}
+
+int16_t parse_int16_t(const CnChar *s, bool *ok)
+{
+    int base;
+    auto p = parsePrefix(s, &base);
+    return toInt16(p, ok, base);
+}
+
+uint16_t parse_uint16_t(const CnChar *s, bool *ok)
+{
+    int base;
+    auto p = parsePrefix(s, &base);
+    return toUInt16(p, ok, base);
+}
+
+int32_t parse_int32_t(const CnChar *s, bool *ok)
+{
+    int base;
+    auto p = parsePrefix(s, &base);
+    return toInt32(p, ok, base);
+}
+
+uint32_t parse_uint32_t(const CnChar *s, bool *ok)
+{
+    int base;
+    auto p = parsePrefix(s, &base);
+    return toUInt32(p, ok, base);
+}
+
+int64_t parse_int64_t(const CnChar *s, bool *ok)
+{
+    int base;
+    auto p = parsePrefix(s, &base);
+    return toInt64(p, ok, base);
+}
+
+uint64_t parse_uint64_t(const CnChar *s, bool *ok)
+{
+    int base;
+    auto p = parsePrefix(s, &base);
+    return toUInt64(p, ok, base);
+}
+
 CnString toUpper(const CnChar *s, size_t size)
 {
     CnString r(s);
@@ -391,6 +471,24 @@ DataSuffix DataTypeToSuffix(DataType dataType)
     case Data_Float : return Suffix_Float  ;
     case Data_Double: return Suffix_Double ;
     default         : return Suffix_Default;
+    }
+}
+
+const CnChar* DataTypeToShortSuffixChars(DataType dataType)
+{
+    switch (dataType)
+    {
+    case Data_Int16 : return CnSTR("S" );
+    case Data_UInt16: return CnSTR("R" );
+    case Data_Int32 : return CnSTR("I" );
+    case Data_UInt32: return CnSTR("U" );
+    case Data_Int64 : return CnSTR("LL");
+    case Data_UInt64: return CnSTR("UL");
+    case Data_Int   : return CnSTR("I" );
+    case Data_UInt  : return CnSTR("U" );
+    case Data_Float : return CnSTR("F" );
+    case Data_Double: return CnSTR("LF");
+    default         : return CnSTR(""  );
     }
 }
 

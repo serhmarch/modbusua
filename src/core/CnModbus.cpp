@@ -72,7 +72,7 @@ Defaults::Defaults() :
     StopBits        (ModbusSerialPort::Defaults::instance().stopBits        ),
     FlowControl     (ModbusSerialPort::Defaults::instance().flowControl     ),
     TimeoutFirstByte(ModbusSerialPort::Defaults::instance().timeoutFirstByte),
-    TimeoutInterByte(ModbusSerialPort::Defaults::instance().timeoutInterByte)
+    TimeoutInterByte(0)
 {
 }
 
@@ -615,8 +615,9 @@ void fillPort(ModbusPort *port, const Config &cfg)
         bool ok;
         ModbusTcpPort *p = static_cast<ModbusTcpPort*>(port);
         std::string host = Cn::toStdString(getCfgHost(cfg, &ok)); if (ok) p->setHost(host.data());
-        auto tcpport = getCfgPort   (cfg, &ok); if (ok) p->setPort   (tcpport);
-        auto timeout = getCfgTimeout(cfg, &ok); if (ok) p->setTimeout(timeout);
+        auto tcpport            = getCfgPort            (cfg, &ok); if (ok) p->setPort            (tcpport         );
+        auto timeout            = getCfgTimeout         (cfg, &ok); if (ok) p->setTimeout         (timeout         );
+        auto timeoutInterByte   = getCfgTimeoutInterByte(cfg, &ok); if (ok) p->setTimeoutInterByte(timeoutInterByte);;
     }
         break;
     case Modbus::RTU:
