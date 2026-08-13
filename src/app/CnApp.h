@@ -200,7 +200,7 @@ protected:
 protected:
     void parseArgs(int argc, char *argv[]);
     virtual bool parseArg(int argc, char *argv[], int &i);
-    virtual void printVersion();
+    virtual void printVersionAll();
     virtual void printHelp();
     void processStopThreads();
 

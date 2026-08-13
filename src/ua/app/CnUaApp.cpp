@@ -68,10 +68,10 @@ void CnUaApp::finalize()
     m_server = nullptr;
 }
 
-void CnUaApp::printVersion()
+void CnUaApp::printVersionAll()
 {
-    CnApp::printVersion();
-    CnStd::cout << CnSTR("open62541 version: ") << CnSTR(CN_UA_VERSION_STR) << std::endl;
+    CnApp::printVersionAll();
+    CnStd::cout << CnSTR("open62541: ") << CnSTR(CN_UA_VERSION_STR) << std::endl;
 }
 
 void CnUaApp::printHelp()

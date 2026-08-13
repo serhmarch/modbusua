@@ -36,7 +36,7 @@ protected:
     void finalize() override;
 
 protected:
-    void printVersion() override;
+    void printVersionAll() override;
     void printHelp() override;
     
 protected:

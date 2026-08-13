@@ -217,6 +217,7 @@ Available command‑line options for the `modbusua` executable:
 | Option            | Short     | Param         | Description                                   
 |:------------------|:----------|:--------------|:----------------------------------------------
 | `--version`       | `-v`      | `-`           | Program version                               
+| `--version-all`   |           |               | Full version (+ libs)
 | `--help`          | `-h/-?`   | `-`           | Help                                          
 | `--file`          | `-f`      | `<filename>`  | Specify configuration file (default `modbusua.conf`)
 | `--service-name`  | `-s`      | `<name>`      | Specify service name (default `modbusua`)

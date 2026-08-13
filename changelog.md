@@ -17,3 +17,5 @@
 
 * Fixed Device config synchronization, issue #1
 * Added the `access modifier` (`access`) configuration parameter for Modbus ItemReference
+* The command-line option `--version` has been replaced with `--version-all`,
+  and `--version` simply returns a string in the format `<major>.<minor>.<patch>`

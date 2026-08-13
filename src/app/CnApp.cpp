@@ -279,7 +279,12 @@ void CnApp::parseArgs(int argc, char *argv[])
         char *opt = argv[i];
         if (!std::strcmp(opt, "--version") || !std::strcmp(opt, "-v"))
         {
-            printVersion();
+            CnStd::cout << CnSTR(CN_VERSION_STR) << std::endl;
+            exit(0);
+        }
+        if (!std::strcmp(opt, "--version-all"))
+        {
+            printVersionAll();
             exit(0);
         }
         if (!std::strcmp(opt, "--help") || !std::strcmp(opt, "-h") || !std::strcmp(opt, "-?"))
@@ -330,10 +335,10 @@ bool CnApp::parseArg(int argc, char *argv[], int &i)
     return false;
 }
 
-void CnApp::printVersion()
+void CnApp::printVersionAll()
 {
-    CnStd::cout << m_name << CnSTR("   version: ") << CnSTR(CN_VERSION_STR) << std::endl;
-    CnStd::cout << CnSTR("ModbusLib version: ") << CnSTR(MODBUSLIB_VERSION_STR) << std::endl;
+    CnStd::cout << m_name << CnSTR(": ") << CnSTR(CN_VERSION_STR) << std::endl;
+    CnStd::cout << CnSTR("ModbusLib: ") << CnSTR(MODBUSLIB_VERSION_STR) << std::endl;
 }
 
 void CnApp::printHelp()
@@ -341,6 +346,7 @@ void CnApp::printHelp()
     CnStd::cout << CnSTR("usage: ") << m_name << CnSTR(" [options]") << CnSTR("\n");
     CnStd::cout << CnSTR("options:\n")
                    CnSTR("  -v, --version             show version\n")
+                   CnSTR("      --version-all         show all versions (+ libs)\n")
                    CnSTR("  -h, -?, --help            show this help\n")
                    CnSTR("  -s, --service-name <name> service name, default: ") << m_name.data() << CnSTR("\n") <<
                    CnSTR("      --logdir <dir>        directory for log files, default: ") << m_defaultLogDirPath << CnSTR("\n") <<
